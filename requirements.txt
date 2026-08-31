@@ -1,0 +1,2 @@
+plotly>=5.22
+statsmodels>=0.14

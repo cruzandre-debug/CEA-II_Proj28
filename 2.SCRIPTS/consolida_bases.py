@@ -218,7 +218,7 @@ df_limpo['ANO_COD'] = df_limpo['MES_COD'] // 100
 # - Levantamento de quais séries não tem nenhum IPCA, quais estão completas e quais são parciais
 
 colunas_ipca = ['IPCA_VAR_MENSAL', 'IPCA_PESO_MENSAL', 'IPCA_VAR_12M', 'IPCA_VAR_YTD']
-df_limpo[colunas_ipca] = df_limpo[colunas_ipca].replace(['-', '...'], np.nan)
+df_limpo[colunas_ipca] = df_limpo[colunas_ipca].replace(['-', '...'], np.nan).apply(pd.to_numeric)
 
 # COMPLETUDE_INFO: por CODIGO, se IPCA_VAR_MENSAL está ausente em TODOS os meses (TOTAL),
 # em ALGUNS meses (PARCIAL) ou em NENHUM (COMPLETA).
@@ -238,17 +238,44 @@ df_limpo = df_limpo.merge(resumo_completude['COMPLETUDE_INFO'], on='CODIGO', how
 # 2202003 é redundante com o grupo 2202 (mesmo IPCA_VAR_MENSAL em todos os meses) - mantém só o grupo.
 df_limpo = df_limpo[df_limpo['CODIGO'] != '2202003']
 
-# ========== CÁLCULOS DE VARIACAO ACUMULADA ============ #
+
+# ========== CÁLCULOS DE VARIACAO ACUMULADA E NUMERO ÍNDICE ============ #
 def var_acumulada(janela_temporal):
     return (np.prod((1 + janela_temporal/100)) - 1)*100
 
+def num_ind_ipca(df, ponto_tempo = 200501, base_value = 100):
+    # Número índice acumulado por CODIGO a partir de ponto_tempo (mês-base = base_value).
+    # Meses sem IPCA_VAR_MENSAL são tratados como variação 0% para o índice não travar em NaN.
+    col_name = f"CALC_NUM_IND_IPCA_{str(ponto_tempo)[:4]}"
+    df = df.copy()
+    df[col_name] = np.nan
+
+    sub = (
+        df[df['MES_COD'] >= ponto_tempo]
+        .sort_values(by = ["CODIGO", "MES_COD"])
+        .copy()
+    )
+    variacao = sub["IPCA_VAR_MENSAL"].fillna(0)
+    # o mês-base não compõe seu próprio índice — por isso o fator dele é 1
+    fator = np.where(sub["MES_COD"] == ponto_tempo, 1.0, 1 + variacao / 100)
+    sub["fator"] = fator
+    sub[col_name] = sub.groupby("CODIGO")["fator"].transform(lambda f: base_value * np.cumprod(f))
+
+    df.loc[sub.index, col_name] = sub[col_name]
+    return df
+
+
 df_limpo["CALC_IPCA_VAR_12M"] = df_limpo.groupby(by = "CODIGO", as_index = False)["IPCA_VAR_MENSAL"].rolling(window = 12, min_periods = 1).apply(var_acumulada, raw = True)["IPCA_VAR_MENSAL"]
 df_limpo["CALC_IPCA_VAR_ANO"] = df_limpo.groupby(by = ["CODIGO", "ANO_COD"], as_index = False)["IPCA_VAR_MENSAL"].rolling(window = 12, min_periods = 1).apply(var_acumulada, raw = True)["IPCA_VAR_MENSAL"]
+
+PONTOS_NUM_INDICE = [200001, 200501, 201001]
+for ponto in PONTOS_NUM_INDICE:
+    df_limpo = num_ind_ipca(df_limpo, ponto_tempo = ponto)
 #--------------------------------------------------------#
 
-colunas_finais = ['CATEGORIA_COD', 'CATEGORIA', 'CODIGO', 
-                  'NOME_ATIVO_BRUTO', 'NOME_ATIVO', 'CATEGORIA_TIPO', 
-                  'COMPLETUDE_INFO', 'ANO_COD', 'MES_COD', 'MES'] + ['IPCA_VAR_MENSAL', 'IPCA_PESO_MENSAL', 'CALC_IPCA_VAR_12M', 'CALC_IPCA_VAR_ANO']
+colunas_finais = ['CATEGORIA_COD', 'CATEGORIA', 'CODIGO',
+                  'NOME_ATIVO_BRUTO', 'NOME_ATIVO', 'CATEGORIA_TIPO',
+                  'COMPLETUDE_INFO', 'ANO_COD', 'MES_COD', 'MES'] + ['IPCA_VAR_MENSAL', 'IPCA_PESO_MENSAL', 'CALC_IPCA_VAR_12M', 'CALC_IPCA_VAR_ANO'] + [f"CALC_NUM_IND_IPCA_{str(p)[:4]}" for p in PONTOS_NUM_INDICE]
 
 df_limpo = df_limpo[colunas_finais].sort_values(by = ['CODIGO', 'MES_COD']) # Ordenamos da seguinte forma: vemos todos o periodo completo de uma série por vez.
 

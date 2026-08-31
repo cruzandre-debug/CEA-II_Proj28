@@ -28,6 +28,9 @@ PALETTE_CB = [
     "#E69F00", "#56B4E9", "#009E73", "#D55E00",
     "#0072B2", "#CC79A7", "#F0E442", "#000000",
 ]
+# Tipo de linha por grupo — ajuda a distinguir séries quando muitas estão selecionadas
+GRUPO_DASH  = {"ALIMENTACAO": "solid", "HABITACAO": "dash", "GERAL": "dot"}
+GRUPO_LABEL = {"ALIMENTACAO": "Alimentação", "HABITACAO": "Habitação", "GERAL": "Geral"}
 
 # ── Dados ─────────────────────────────────────────────────────────────────────
 DATA_PATH = (
@@ -39,7 +42,10 @@ DATA_PATH = (
 def load_data() -> pd.DataFrame:
     df = pd.read_csv(DATA_PATH, sep=";", low_memory=False)
     df["DATA"] = pd.to_datetime(df["MES_COD"], format="%Y%m")
-    for col in ["IPCA_VAR_MENSAL", "CALC_IPCA_VAR_12M", "CALC_IPCA_VAR_ANO", "IPCA_PESO_MENSAL"]:
+    for col in [
+        "IPCA_VAR_MENSAL", "CALC_IPCA_VAR_12M", "CALC_IPCA_VAR_ANO", "IPCA_PESO_MENSAL",
+        "CALC_NUM_IND_IPCA_2000", "CALC_NUM_IND_IPCA_2005", "CALC_NUM_IND_IPCA_2010",
+    ]:
         df[col] = pd.to_numeric(df[col], errors="coerce")
     return df
 
@@ -51,13 +57,19 @@ DEFAULT_ON = {"GERAL", "GRUPO"}
 series_info = (
     df[["CODIGO", "NOME_ATIVO", "CATEGORIA_TIPO", "COMPLETUDE_INFO"]]
     .drop_duplicates(subset="CODIGO")
-    .sort_values(["CATEGORIA_TIPO", "CODIGO"])
+    .sort_values(["CATEGORIA_TIPO", "NOME_ATIVO"])
     .reset_index(drop=True)
+)
+_codigo_str = series_info["CODIGO"].astype(str)
+series_info["GRUPO"] = np.where(
+    series_info["CODIGO"] == 0, "GERAL",
+    np.where(_codigo_str.str[0] == "1", "ALIMENTACAO", "HABITACAO"),
 )
 series_by_type = {
     tipo: series_info[series_info["CATEGORIA_TIPO"] == tipo]
     for tipo in TIPO_ORDER
 }
+GRUPO_BY_CODIGO = series_info.set_index("CODIGO")["GRUPO"].to_dict()
 
 # ── Inicialização do session_state ────────────────────────────────────────────
 if "dark_mode" not in st.session_state:
@@ -183,12 +195,17 @@ with st.sidebar:
 
     st.markdown("**Variável**")
     VAR_OPTIONS = {
-        "Variação mensal (%)":           "IPCA_VAR_MENSAL",
-        "Variação acum. 12 meses (%)":   "CALC_IPCA_VAR_12M",
-        "Variação acumulada no ano (%)": "CALC_IPCA_VAR_ANO",
+        "Variação mensal (%)":                    "IPCA_VAR_MENSAL",
+        "Variação acum. 12 meses (%)":             "CALC_IPCA_VAR_12M",
+        "Variação acumulada no ano (%)":           "CALC_IPCA_VAR_ANO",
+        "Número índice (base 100 = jan/2000)":     "CALC_NUM_IND_IPCA_2000",
+        "Número índice (base 100 = jan/2005)":     "CALC_NUM_IND_IPCA_2005",
+        "Número índice (base 100 = jan/2010)":     "CALC_NUM_IND_IPCA_2010",
     }
     var_label = st.selectbox("Variável", list(VAR_OPTIONS.keys()), label_visibility="collapsed")
     var_col   = VAR_OPTIONS[var_label]
+    is_indice = var_col.startswith("CALC_NUM_IND_IPCA")
+    unidade   = "" if is_indice else "%"
 
     st.markdown("**Janela temporal**")
     min_year = int(df["DATA"].dt.year.min())
@@ -201,6 +218,13 @@ with st.sidebar:
     st.divider()
     st.markdown("**Séries**")
 
+    GRUPO_OPCOES = {"Todas": None, "🍎 Alimentação": "ALIMENTACAO", "🏠 Habitação": "HABITACAO"}
+    grupo_label = st.segmented_control(
+        "Grupo", list(GRUPO_OPCOES.keys()),
+        default="Todas", key="grupo_filtro", label_visibility="collapsed",
+    )
+    grupo_sel = GRUPO_OPCOES.get(grupo_label)
+
     def _make_select_all_cb(tipo: str, rows: pd.DataFrame):
         def cb():
             val = st.session_state[f"all_{tipo}"]
@@ -209,7 +233,8 @@ with st.sidebar:
         return cb
 
     for tipo in TIPO_ORDER:
-        rows = series_by_type[tipo]
+        rows_tipo = series_by_type[tipo]
+        rows = rows_tipo if grupo_sel is None else rows_tipo[rows_tipo["GRUPO"] == grupo_sel]
         n    = len(rows)
         with st.expander(f"{tipo}  ({n})", expanded=(tipo in DEFAULT_ON)):
             st.checkbox(
@@ -259,7 +284,7 @@ st.markdown(
 )
 
 # ── Controles de visualização ─────────────────────────────────────────────────
-col_a, col_b, col_c, col_d, _ = st.columns([1.5, 1.8, 2.0, 2.2, 3])
+col_a, col_b, col_c, col_d, col_e, col_f, _ = st.columns([1.5, 1.8, 2.0, 2.0, 2.0, 2.0, 1.0])
 with col_a:
     show_series   = st.toggle("📉 Série",        value=True)
 with col_b:
@@ -268,7 +293,16 @@ with col_c:
     show_seasonal = st.toggle("🌊 Sazonalidade", value=False)
 with col_d:
     cb_friendly   = st.toggle("👁 Daltônico",    value=False)
+with col_e:
+    split_view    = st.toggle("🪟 Comparar grupos", value=False)
+with col_f:
+    match_y_toggle = st.toggle(
+        "🔗 Mesma escala Y", value=False,
+        disabled=not split_view,
+        help="Disponível quando 'Comparar grupos' está ativo.",
+    )
 
+match_y = split_view and match_y_toggle
 palette = PALETTE_CB if cb_friendly else PALETTE
 
 if not selected:
@@ -302,15 +336,24 @@ def get_decomposition(cod: str, col: str):
         return None, None
 
 # ── Construção do gráfico ─────────────────────────────────────────────────────
-n_rows    = 1 + (1 if show_seasonal else 0)
-heights   = [0.62, 0.38] if show_seasonal else [1.0]
-subtitles = [var_label] + (["Componente Sazonal"] if show_seasonal else [])
+n_rows = 1 + (1 if show_seasonal else 0)
+n_cols = 2 if split_view else 1
+heights = [0.62, 0.38] if show_seasonal else [1.0]
+
+if split_view:
+    subtitles = [f"{var_label} — 🍎 Alimentação", f"{var_label} — 🏠 Habitação"]
+    if show_seasonal:
+        subtitles += ["Sazonalidade — 🍎 Alimentação", "Sazonalidade — 🏠 Habitação"]
+else:
+    subtitles = [var_label] + (["Componente Sazonal"] if show_seasonal else [])
 
 fig = make_subplots(
     rows=n_rows,
-    cols=1,
+    cols=n_cols,
     shared_xaxes=True,
+    shared_yaxes=match_y,
     row_heights=heights,
+    horizontal_spacing=0.06 if split_view else 0.02,
     vertical_spacing=0.10,
     subplot_titles=subtitles,
 )
@@ -323,12 +366,26 @@ stl_warnings = []
 
 for i, cod in enumerate(selected):
     color = palette[i % len(palette)]
+    grupo = GRUPO_BY_CODIGO.get(cod, "GERAL")
+    dash  = GRUPO_DASH.get(grupo, "solid")
     sub   = df_sel[df_sel["CODIGO"] == cod].sort_values("DATA")
     if sub.empty:
         continue
 
     nome = sub["NOME_ATIVO"].iloc[0]
     y    = sub.set_index("DATA")[var_col].sort_index()
+
+    # Em qual(is) coluna(s) esta série aparece. Sem divisão por grupo: sempre a coluna 1.
+    # Com divisão: Alimentação vai à esquerda, Habitação à direita, e o Índice geral
+    # (não pertence a nenhum dos dois) aparece nas duas para servir de referência.
+    if not split_view:
+        cols_target = [1]
+    elif grupo == "ALIMENTACAO":
+        cols_target = [1]
+    elif grupo == "HABITACAO":
+        cols_target = [2]
+    else:
+        cols_target = [1, 2]
 
     # Qual componente aparece primeiro na legenda para este grupo
     legend_anchor = (
@@ -339,20 +396,21 @@ for i, cod in enumerate(selected):
 
     # ── Série original ────────────────────────────────────────────────────────
     if show_series:
-        fig.add_trace(
-            go.Scatter(
-                x=y.index,
-                y=y.values,
-                name=nome,
-                line=dict(color=color, width=1.8),
-                legendgroup=cod,
-                showlegend=(legend_anchor == "series"),
-                hovertemplate=(
-                    f"<b>{nome}</b><br>%{{x|%b %Y}}: %{{y:.2f}}%<extra></extra>"
+        for c in cols_target:
+            fig.add_trace(
+                go.Scatter(
+                    x=y.index,
+                    y=y.values,
+                    name=nome,
+                    line=dict(color=color, width=1.8, dash=dash),
+                    legendgroup=cod,
+                    showlegend=(legend_anchor == "series" and c == cols_target[0]),
+                    hovertemplate=(
+                        f"<b>{nome}</b><br>%{{x|%b %Y}}: %{{y:.2f}}{unidade}<extra></extra>"
+                    ),
                 ),
-            ),
-            row=1, col=1,
-        )
+                row=1, col=c,
+            )
 
     # ── Decomposição ──────────────────────────────────────────────────────────
     if show_trend or show_seasonal:
@@ -365,39 +423,41 @@ for i, cod in enumerate(selected):
 
             if show_trend:
                 t = trend[mask]
-                fig.add_trace(
-                    go.Scatter(
-                        x=t.index,
-                        y=t.values,
-                        name=nome,
-                        line=dict(color=color, width=2.8, dash="dash"),
-                        legendgroup=cod,
-                        showlegend=(legend_anchor == "trend"),
-                        hovertemplate=(
-                            f"<b>Tendência — {nome}</b><br>"
-                            "%{x|%b %Y}: %{y:.2f}%<extra></extra>"
+                for c in cols_target:
+                    fig.add_trace(
+                        go.Scatter(
+                            x=t.index,
+                            y=t.values,
+                            name=nome,
+                            line=dict(color=color, width=2.8, dash=dash),
+                            legendgroup=cod,
+                            showlegend=(legend_anchor == "trend" and c == cols_target[0]),
+                            hovertemplate=(
+                                f"<b>Tendência — {nome}</b><br>"
+                                f"%{{x|%b %Y}}: %{{y:.2f}}{unidade}<extra></extra>"
+                            ),
                         ),
-                    ),
-                    row=1, col=1,
-                )
+                        row=1, col=c,
+                    )
 
             if show_seasonal:
                 s = seasonal[mask]
-                fig.add_trace(
-                    go.Scatter(
-                        x=s.index,
-                        y=s.values,
-                        name=nome,
-                        line=dict(color=color, width=1.5),
-                        legendgroup=cod,
-                        showlegend=(legend_anchor == "seasonal"),
-                        hovertemplate=(
-                            f"<b>Sazonalidade — {nome}</b><br>"
-                            "%{x|%b %Y}: %{y:.2f}%<extra></extra>"
+                for c in cols_target:
+                    fig.add_trace(
+                        go.Scatter(
+                            x=s.index,
+                            y=s.values,
+                            name=nome,
+                            line=dict(color=color, width=1.5, dash=dash),
+                            legendgroup=cod,
+                            showlegend=(legend_anchor == "seasonal" and c == cols_target[0]),
+                            hovertemplate=(
+                                f"<b>Sazonalidade — {nome}</b><br>"
+                                f"%{{x|%b %Y}}: %{{y:.2f}}{unidade}<extra></extra>"
+                            ),
                         ),
-                    ),
-                    row=2, col=1,
-                )
+                        row=2, col=c,
+                    )
 
 # ── Eixos ─────────────────────────────────────────────────────────────────────
 fig.update_xaxes(
@@ -408,16 +468,16 @@ fig.update_xaxes(
 fig.update_yaxes(
     showgrid=True, gridcolor=grid_color,
     zeroline=True, zerolinecolor=zero_color, zerolinewidth=1.2,
-    ticksuffix="%",
+    ticksuffix=unidade,
     tickfont=dict(color=font_color),
     title_font=dict(color=font_color),
 )
 fig.update_yaxes(title_text=var_label, row=1, col=1)
 if show_seasonal:
-    fig.update_yaxes(title_text="Componente sazonal (%)", row=2, col=1)
-    fig.update_xaxes(title_text="Data", row=2, col=1)
+    fig.update_yaxes(title_text=f"Componente sazonal ({unidade or 'pts'})", row=2, col=1)
+    fig.update_xaxes(title_text="Data", row=2)
 else:
-    fig.update_xaxes(title_text="Data", row=1, col=1)
+    fig.update_xaxes(title_text="Data", row=1)
 
 # ── Layout geral ──────────────────────────────────────────────────────────────
 fig.update_layout(
@@ -445,6 +505,8 @@ fig.update_layout(
 
 st.plotly_chart(fig, use_container_width=True)
 
+st.caption("Tipo de linha por grupo: —— Alimentação · ╌╌ Habitação · ⋯⋯ Índice geral")
+
 if stl_warnings:
     st.caption(
         "⚠️ Decomposição STL não disponível para: "
@@ -454,9 +516,11 @@ if stl_warnings:
 
 # ── Tabela informativa ────────────────────────────────────────────────────────
 with st.expander("ℹ️ Informações das séries selecionadas"):
+    tabela_info = series_info[series_info["CODIGO"].isin(selected)].copy()
+    tabela_info["GRUPO"] = tabela_info["GRUPO"].map(GRUPO_LABEL)
     st.dataframe(
-        series_info[series_info["CODIGO"].isin(selected)][
-            ["CODIGO", "NOME_ATIVO", "CATEGORIA_TIPO", "COMPLETUDE_INFO"]
+        tabela_info[
+            ["CODIGO", "NOME_ATIVO", "GRUPO", "CATEGORIA_TIPO", "COMPLETUDE_INFO"]
         ].reset_index(drop=True),
         use_container_width=True,
         hide_index=True,
