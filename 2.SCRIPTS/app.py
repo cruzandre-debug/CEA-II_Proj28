@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from statsmodels.tsa.seasonal import STL
@@ -28,9 +27,26 @@ PALETTE_CB = [
     "#E69F00", "#56B4E9", "#009E73", "#D55E00",
     "#0072B2", "#CC79A7", "#F0E442", "#000000",
 ]
-# Tipo de linha por grupo — ajuda a distinguir séries quando muitas estão selecionadas
-GRUPO_DASH  = {"ALIMENTACAO": "solid", "HABITACAO": "dash", "GERAL": "dot"}
-GRUPO_LABEL = {"ALIMENTACAO": "Alimentação", "HABITACAO": "Habitação", "GERAL": "Geral"}
+# Os 9 grupos do IPCA, na ordem oficial do IBGE. A coluna GRUPO já vem pronta do CSV
+# (gerada em consolida_bases.py), então usamos o próprio nome do grupo como chave.
+GRUPO_ORDER = [
+    "Alimentação e bebidas", "Habitação", "Artigos de residência", "Vestuário",
+    "Transportes", "Saúde e cuidados pessoais", "Despesas pessoais", "Educação",
+    "Comunicação",
+]
+GRUPO_GERAL = "Índice geral"
+GRUPO_EMOJI = {
+    "Alimentação e bebidas": "🍎", "Habitação": "🏠", "Artigos de residência": "🛋️",
+    "Vestuário": "👕", "Transportes": "🚗", "Saúde e cuidados pessoais": "💊",
+    "Despesas pessoais": "💼", "Educação": "📚", "Comunicação": "📱",
+    GRUPO_GERAL: "📊",
+}
+# Tipo de linha por grupo — ajuda a distinguir séries quando muitas estão selecionadas.
+# O plotly só tem 5 padrões tracejados nomeados além de "solid", então eles ciclam entre
+# os 9 grupos (a distinção principal continua sendo cor + nome na legenda/hover).
+_DASH_CYCLE = ["solid", "dash", "longdash", "dashdot", "longdashdot"]
+GRUPO_DASH = {g: _DASH_CYCLE[i % len(_DASH_CYCLE)] for i, g in enumerate(GRUPO_ORDER)}
+GRUPO_DASH[GRUPO_GERAL] = "dot"
 
 # ── Dados ─────────────────────────────────────────────────────────────────────
 DATA_PATH = (
@@ -55,15 +71,10 @@ TIPO_ORDER = ["GERAL", "GRUPO", "SUBGRUPO", "ITEM", "SUBITEM"]
 DEFAULT_ON = {"GERAL", "GRUPO"}
 
 series_info = (
-    df[["CODIGO", "NOME_ATIVO", "CATEGORIA_TIPO", "COMPLETUDE_INFO"]]
+    df[["CODIGO", "NOME_ATIVO", "GRUPO", "CATEGORIA_TIPO", "COMPLETUDE_INFO"]]
     .drop_duplicates(subset="CODIGO")
     .sort_values(["CATEGORIA_TIPO", "NOME_ATIVO"])
     .reset_index(drop=True)
-)
-_codigo_str = series_info["CODIGO"].astype(str)
-series_info["GRUPO"] = np.where(
-    series_info["CODIGO"] == 0, "GERAL",
-    np.where(_codigo_str.str[0] == "1", "ALIMENTACAO", "HABITACAO"),
 )
 series_by_type = {
     tipo: series_info[series_info["CATEGORIA_TIPO"] == tipo]
@@ -218,7 +229,9 @@ with st.sidebar:
     st.divider()
     st.markdown("**Séries**")
 
-    GRUPO_OPCOES = {"Todas": None, "🍎 Alimentação": "ALIMENTACAO", "🏠 Habitação": "HABITACAO"}
+    GRUPO_OPCOES = {"Todas": None}
+    for _g in GRUPO_ORDER:
+        GRUPO_OPCOES[f"{GRUPO_EMOJI[_g]} {_g}"] = _g
     grupo_label = st.segmented_control(
         "Grupo", list(GRUPO_OPCOES.keys()),
         default="Todas", key="grupo_filtro", label_visibility="collapsed",
@@ -284,7 +297,9 @@ st.markdown(
 )
 
 # ── Controles de visualização ─────────────────────────────────────────────────
-col_a, col_b, col_c, col_d, col_e, col_f, _ = st.columns([1.5, 1.8, 2.0, 2.0, 2.0, 2.0, 1.0])
+col_a, col_b, col_c, col_d, col_e, col_f, col_g, _ = st.columns(
+    [1.5, 1.8, 2.0, 2.0, 2.0, 2.0, 2.2, 0.6]
+)
 with col_a:
     show_series   = st.toggle("📉 Série",        value=True)
 with col_b:
@@ -300,6 +315,13 @@ with col_f:
         "🔗 Mesma escala Y", value=False,
         disabled=not split_view,
         help="Disponível quando 'Comparar grupos' está ativo.",
+    )
+with col_g:
+    dash_por_grupo = st.toggle(
+        "〰️ Linha por grupo", value=True, key="dash_por_grupo",
+        help="Quando ativado, cada grupo do IPCA usa um padrão de traço diferente "
+             "(sólido, tracejado, pontilhado...). Desative para todas as séries "
+             "usarem linha sólida.",
     )
 
 match_y = split_view and match_y_toggle
@@ -337,15 +359,33 @@ def get_decomposition(cod: str, col: str):
 
 # ── Construção do gráfico ─────────────────────────────────────────────────────
 n_rows = 1 + (1 if show_seasonal else 0)
-n_cols = 2 if split_view else 1
 heights = [0.62, 0.38] if show_seasonal else [1.0]
 
+# Uma coluna por grupo efetivamente presente entre as séries selecionadas (o "Índice
+# geral" não conta como grupo próprio — ele aparece replicado em todas as colunas).
 if split_view:
-    subtitles = [f"{var_label} — 🍎 Alimentação", f"{var_label} — 🏠 Habitação"]
+    grupos_presentes = [
+        g for g in GRUPO_ORDER
+        if any(GRUPO_BY_CODIGO.get(cod) == g for cod in selected)
+    ]
+    if not grupos_presentes:
+        grupos_presentes = [GRUPO_GERAL]
+else:
+    grupos_presentes = []
+
+n_cols = len(grupos_presentes) if split_view else 1
+col_by_grupo = {g: i + 1 for i, g in enumerate(grupos_presentes)}
+
+if split_view:
+    def _titulo_grupo(g):
+        return f"{GRUPO_EMOJI.get(g, '')} {g}".strip()
+    subtitles = [f"{var_label} — {_titulo_grupo(g)}" for g in grupos_presentes]
     if show_seasonal:
-        subtitles += ["Sazonalidade — 🍎 Alimentação", "Sazonalidade — 🏠 Habitação"]
+        subtitles += [f"Sazonalidade — {_titulo_grupo(g)}" for g in grupos_presentes]
+    horizontal_spacing = min(0.06, 0.9 / (n_cols - 1)) if n_cols > 1 else 0.02
 else:
     subtitles = [var_label] + (["Componente Sazonal"] if show_seasonal else [])
+    horizontal_spacing = 0.02
 
 fig = make_subplots(
     rows=n_rows,
@@ -353,7 +393,7 @@ fig = make_subplots(
     shared_xaxes=True,
     shared_yaxes=match_y,
     row_heights=heights,
-    horizontal_spacing=0.06 if split_view else 0.02,
+    horizontal_spacing=horizontal_spacing,
     vertical_spacing=0.10,
     subplot_titles=subtitles,
 )
@@ -366,8 +406,8 @@ stl_warnings = []
 
 for i, cod in enumerate(selected):
     color = palette[i % len(palette)]
-    grupo = GRUPO_BY_CODIGO.get(cod, "GERAL")
-    dash  = GRUPO_DASH.get(grupo, "solid")
+    grupo = GRUPO_BY_CODIGO.get(cod, GRUPO_GERAL)
+    dash  = GRUPO_DASH.get(grupo, "solid") if dash_por_grupo else "solid"
     sub   = df_sel[df_sel["CODIGO"] == cod].sort_values("DATA")
     if sub.empty:
         continue
@@ -376,16 +416,14 @@ for i, cod in enumerate(selected):
     y    = sub.set_index("DATA")[var_col].sort_index()
 
     # Em qual(is) coluna(s) esta série aparece. Sem divisão por grupo: sempre a coluna 1.
-    # Com divisão: Alimentação vai à esquerda, Habitação à direita, e o Índice geral
-    # (não pertence a nenhum dos dois) aparece nas duas para servir de referência.
+    # Com divisão: cada grupo tem sua própria coluna, e o Índice geral (não pertence a
+    # nenhum grupo) aparece em todas para servir de referência.
     if not split_view:
         cols_target = [1]
-    elif grupo == "ALIMENTACAO":
-        cols_target = [1]
-    elif grupo == "HABITACAO":
-        cols_target = [2]
+    elif grupo == GRUPO_GERAL:
+        cols_target = list(range(1, n_cols + 1))
     else:
-        cols_target = [1, 2]
+        cols_target = [col_by_grupo.get(grupo, 1)]
 
     # Qual componente aparece primeiro na legenda para este grupo
     legend_anchor = (
@@ -505,7 +543,11 @@ fig.update_layout(
 
 st.plotly_chart(fig, use_container_width=True)
 
-st.caption("Tipo de linha por grupo: —— Alimentação · ╌╌ Habitação · ⋯⋯ Índice geral")
+if dash_por_grupo:
+    st.caption(
+        "O tipo de linha (sólida, tracejada, pontilhada...) varia por grupo — veja o "
+        "grupo de cada série na tabela de séries selecionadas abaixo."
+    )
 
 if stl_warnings:
     st.caption(
@@ -517,7 +559,6 @@ if stl_warnings:
 # ── Tabela informativa ────────────────────────────────────────────────────────
 with st.expander("ℹ️ Informações das séries selecionadas"):
     tabela_info = series_info[series_info["CODIGO"].isin(selected)].copy()
-    tabela_info["GRUPO"] = tabela_info["GRUPO"].map(GRUPO_LABEL)
     st.dataframe(
         tabela_info[
             ["CODIGO", "NOME_ATIVO", "GRUPO", "CATEGORIA_TIPO", "COMPLETUDE_INFO"]

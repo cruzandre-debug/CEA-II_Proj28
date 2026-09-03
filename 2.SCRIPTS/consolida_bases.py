@@ -79,13 +79,6 @@ df_consolidado['CATEGORIA_TIPO'] = classifica_categoria_tipo(deriva_codigo(df_co
 df_consolidado.to_csv(PATH_DADOS_REFINADOS / 'IPCA_CONSOLIDADO_BRUTO.csv', sep=';', index=False, encoding='utf-8')
 df_limpo = df_consolidado[df_consolidado["NIVEL_TERRITORIAL_COD"] == 7][['CATEGORIA_COD', 'CATEGORIA', 'MES_COD', 'MES', 'IPCA_VAR_MENSAL', 'IPCA_PESO_MENSAL', 'IPCA_VAR_12M', 'IPCA_VAR_YTD']].copy()
 
-filtro_categoria = (
-    (df_limpo['CATEGORIA'] == 'Índice geral')
-    | df_limpo['CATEGORIA'].str.startswith('1')
-    | df_limpo['CATEGORIA'].str.startswith('2')
-)
-df_limpo = df_limpo[filtro_categoria]
-
 df_limpo[['CODIGO', 'NOME_ATIVO_BRUTO']] = df_limpo['CATEGORIA'].str.split('.', n=1, expand=True)
 df_limpo['CODIGO'] = df_limpo['CODIGO'].str.strip()
 df_limpo['NOME_ATIVO_BRUTO'] = df_limpo['NOME_ATIVO_BRUTO'].str.strip()
@@ -96,6 +89,22 @@ df_limpo.loc[sem_codigo, 'NOME_ATIVO_BRUTO'] = df_limpo.loc[sem_codigo, 'CODIGO'
 df_limpo.loc[sem_codigo, 'CODIGO'] = '0'
 
 df_limpo['CATEGORIA_TIPO'] = classifica_categoria_tipo(df_limpo['CODIGO'])
+
+# Grupo do IPCA (1º dígito do CODIGO) por extenso, na nomenclatura oficial do IBGE.
+GRUPO_NOMES = {
+    '1': 'Alimentação e bebidas',
+    '2': 'Habitação',
+    '3': 'Artigos de residência',
+    '4': 'Vestuário',
+    '5': 'Transportes',
+    '6': 'Saúde e cuidados pessoais',
+    '7': 'Despesas pessoais',
+    '8': 'Educação',
+    '9': 'Comunicação',
+}
+df_limpo['GRUPO'] = np.where(
+    df_limpo['CODIGO'] == '0', 'Índice geral', df_limpo['CODIGO'].str[0].map(GRUPO_NOMES)
+)
 # ------------------------------ #
 
 
@@ -207,6 +216,156 @@ MAPA_CORRECAO_NOME_ATIVO = {
     '2201004': 'Gás de botijão',
     '2202': 'Energia elétrica residencial',
     '2202003': 'Energia elétrica residencial',
+    '1201': 'Alimentação fora do domicílio',
+
+    # --- Grupo 3: Artigos de residência ---
+    '3101002': 'Móveis para sala',
+    '3101003': 'Móveis para quarto',
+    '3101015': 'Móveis para copa e cozinha',
+    '3102005': 'Tapetes',
+    '3102006': 'Cortinas',
+    '3102007': 'Utensílios de copa e cozinha de metal',
+    '3102009': 'Utensílios de copa e cozinha de vidro e louça',
+    '3102010': 'Utensílios de plástico',
+    '3102012': 'Mamadeira, garrafa térmica',
+    '3103001': 'Roupas de cama',
+    '3103002': 'Roupas de mesa',
+    '3103003': 'Roupas de banho',
+    '32': 'Aparelhos eletroeletrônicos',
+    '3201002': 'Ar-condicionado',
+    '3201006': 'Máquina de lavar e secar roupa',
+    '3201013': 'Ventilador e exaustor',
+    '3201027': 'Lâmpadas',
+    '3202': 'TV, som e informática',
+    # Mesmo CODIGO, produto diferente: bases antigas registram "Vídeo-cassete",
+    # bases recentes "Aparelho de DVD" (reclassificação do IBGE, não erro de escrita).
+    # Mantido o nome mais recente.
+    '3202005': 'Aparelho de DVD',
+    '3202008': 'Videogame (console)',
+    '3202028': 'Computador pessoal',
+    '3301002': 'Conserto de refrigerador e freezer',
+    '3301015': 'Conserto de máquina de lavar/secar roupa',
+
+    # --- Grupo 4: Vestuário ---
+    '4101': 'Roupa masculina',
+    '4101002': 'Calça comprida masculina',
+    '4101005': 'Agasalho masculino',
+    '4101006': 'Bermuda e short masculino',
+    '4101009': 'Camisa masculina',
+    '4101010': 'Camiseta masculina',
+    '4102': 'Roupa feminina',
+    '4102002': 'Calça comprida feminina',
+    '4102003': 'Agasalho feminino',
+    '4102008': 'Blusa',
+    '4102009': 'Meia feminina',
+    '4102011': 'Roupa de dormir feminina',
+    '4102012': 'Roupa de banho feminina',
+    '4102013': 'Bermuda e short feminino',
+    '4103': 'Roupa infantil',
+    '4103001': 'Uniforme escolar',
+    '4103002': 'Calça comprida infantil',
+    '4103005': 'Agasalho infantil',
+    '4103007': 'Vestido infantil',
+    '4103008': 'Bermuda e short infantil',
+    '4103011': 'Camisa infantil',
+    '4103012': 'Camiseta infantil',
+    '4103031': 'Conjunto infantil',
+    '4201002': 'Sapato masculino',
+    '4201003': 'Sapato feminino',
+    '4201004': 'Sapato infantil',
+    '4201007': 'Sandália / chinelo feminino',
+    '4201015': 'Bolsa e carteira feminina',
+    '4201029': 'Bolsa e carteira masculina',
+    '4201063': 'Tênis de homem ou mulher',
+    '43': 'Joias, relógios e bijuterias',
+    '4301': 'Joias, relógios e bijuterias',
+    '4301002': 'Joias',
+    '4401001': 'Tecidos',
+
+    # --- Grupo 5: Transportes ---
+    '5': 'Transportes',
+    '51': 'Transportes',
+    '5101006': 'Ônibus intermunicipal',
+    '5101010': 'Passagem aérea',
+    '5101022': 'Transporte hidroviário',
+    '5102001': 'Automóvel novo',
+    '5102005': 'Seguro voluntário de veículo',
+    '5102007': 'Óleo lubrificante',
+    '5102010': 'Pneu e câmara-de-ar',
+    '5102011': 'Conserto de automóvel',
+    '5102020': 'Automóvel usado',
+    '5102053': 'Motocicleta',
+    '5104': 'Combustíveis (veículos)',
+    '5104002': 'Etanol',
+
+    # --- Grupo 6: Saúde e cuidados pessoais ---
+    '61': 'Produtos farmacêuticos e óticos',
+    '6101001': 'Anti-infeccioso e antibiótico',
+    '6101002': 'Analgésico e antitérmico',
+    '6101004': 'Antigripal e antitussígeno',
+    '6101005': 'Colagogos e hepatoprotetores',
+    '6101006': 'Antimicótico e parasiticida',
+    '6101007': 'Antialérgico e broncodilatador',
+    '6101009': 'Gastroprotetor',
+    '6101010': 'Vitamina e fortificante',
+    '6101011': 'Anticoncepcional e hormônio',
+    '6101013': 'Psicotrópico e anorexígeno',
+    '6101014': 'Hipotensor e hipocolesterolêmico',
+    '6102': 'Óculos e lentes',
+    '6102001': 'Lente de grau',
+    '62': 'Serviços de saúde',
+    '6201': 'Serviços médicos e dentários',
+    '6201005': 'Aparelho ortodôntico',
+    '6201008': 'Tratamento psicológico e fisioterapêutico',
+    '6202': 'Serviços laboratoriais e hospitalares',
+    '6202004': 'Hospitalização e cirurgia',
+    '6202006': 'Exame de imagem',
+    '6301001': 'Produto para cabelo',
+    '6301004': 'Produto para barba',
+    '6301006': 'Produto para pele',
+    '6301007': 'Produto para higiene bucal',
+    '6301014': 'Desodorante e perfume',
+    '6301015': 'Absorvente higiênico',
+    '6301020': 'Artigos de maquiagem',
+
+    # --- Grupo 7: Despesas pessoais ---
+    '71': 'Serviços pessoais',
+    '7101001': 'Alfaiate e costureira',
+    '7101004': 'Tinturaria e lavanderia',
+    '7101005': 'Manicure e pedicure',
+    '7101009': 'Cabeleireiro e manicure',
+    '7101010': 'Empregado doméstico',
+    '72': 'Recreação, fumo e fotografia',
+    '7201003': 'Ingresso para jogo',
+    '7201006': 'Clubes',
+    '7201008': 'Disco e fita',
+    '7201018': 'Compra e tratamento de animais',
+    '7201020': 'Alimento para animais',
+    '7201023': 'Brinquedos',
+    # Mesmo CODIGO, produto diferente: bases antigas = locação de fita VHS,
+    # bases recentes = locação de DVD (reclassificação do IBGE). Nome mais recente mantido.
+    '7201052': 'Locação de DVD',
+    '7201054': 'Boate, danceteria e discoteca',
+    '7201063': 'Jogos de azar',
+    '7201090': 'Hospedagem',
+    '7201095': 'Pacote turístico',
+    '7202041': 'Cigarros',
+
+    # --- Grupo 8: Educação ---
+    '8101': 'Cursos regulares',
+    '8101002': 'Educação infantil',
+    '8101003': 'Ensino fundamental',
+    '8101004': 'Ensino médio',
+    '8101005': 'Ensino superior',
+    '8101008': 'Educação de jovens e adultos',
+    '8102004': 'Revista não técnica',
+    '8102005': 'Livro não didático',
+    '8104006': 'Atividades físicas',
+
+    # --- Grupo 9: Comunicação ---
+    '9101002': 'Plano de telefonia fixa',
+    '9101008': 'Plano de telefonia móvel',
+    '9101010': 'TV por assinatura',
 }
 df_limpo['NOME_ATIVO'] = df_limpo['CODIGO'].map(MAPA_CORRECAO_NOME_ATIVO).fillna(df_limpo['NOME_ATIVO_BRUTO'])
 
@@ -235,8 +394,27 @@ df_limpo = df_limpo.merge(resumo_completude['COMPLETUDE_INFO'], on='CODIGO', how
 # -------------------------------------------------------- #
 
 
-# 2202003 é redundante com o grupo 2202 (mesmo IPCA_VAR_MENSAL em todos os meses) - mantém só o grupo.
-df_limpo = df_limpo[df_limpo['CODIGO'] != '2202003']
+# Códigos cujo IPCA_VAR_MENSAL é idêntico, mês a mês, ao do seu pai imediato (o IBGE não
+# desagregou o nível inferior) - mantém só o pai, para não duplicar a mesma série duas vezes.
+CODIGOS_REDUNDANTES_COM_PAI = [
+    '2202003',  # == 2202
+    '1201',     # == 12
+    '3301',     # == 33
+    '4201',     # == 42
+    '4301',     # == 43
+    '4401',     # == 44
+    '5201',     # == 52
+    '5201002',  # == 5201
+    '6301',     # == 63
+    '6102012',  # == 6102
+    '6203001',  # == 6203
+    '63',       # == 6
+    '71',       # == 7
+    '81',       # == 8
+    '91',       # == 9
+    '9101',     # == 91
+]
+df_limpo = df_limpo[~df_limpo['CODIGO'].isin(CODIGOS_REDUNDANTES_COM_PAI)]
 
 
 # ========== CÁLCULOS DE VARIACAO ACUMULADA E NUMERO ÍNDICE ============ #
@@ -274,7 +452,7 @@ for ponto in PONTOS_NUM_INDICE:
 #--------------------------------------------------------#
 
 colunas_finais = ['CATEGORIA_COD', 'CATEGORIA', 'CODIGO',
-                  'NOME_ATIVO_BRUTO', 'NOME_ATIVO', 'CATEGORIA_TIPO',
+                  'NOME_ATIVO_BRUTO', 'NOME_ATIVO', 'GRUPO', 'CATEGORIA_TIPO',
                   'COMPLETUDE_INFO', 'ANO_COD', 'MES_COD', 'MES'] + ['IPCA_VAR_MENSAL', 'IPCA_PESO_MENSAL', 'CALC_IPCA_VAR_12M', 'CALC_IPCA_VAR_ANO'] + [f"CALC_NUM_IND_IPCA_{str(p)[:4]}" for p in PONTOS_NUM_INDICE]
 
 df_limpo = df_limpo[colunas_finais].sort_values(by = ['CODIGO', 'MES_COD']) # Ordenamos da seguinte forma: vemos todos o periodo completo de uma série por vez.
