@@ -1,0 +1,468 @@
+CODIGO;ABRANGENCIA;NOME_ATIVO;N_MESES_TOTAL;N_MESES_AUSENTES;INTERVALOS_AUSENTES
+1101051;São Paulo (RM);Feijão - mulatinho;427;427;1991-01 a 2026-07
+1101052;São Paulo (RM);Feijão - preto;427;427;1991-01 a 2026-07
+1101053;São Paulo (RM);Feijão - macáçar (fradinho);427;427;1991-01 a 2026-07
+7101001;São Paulo (RM);Costureira;427;427;1991-01 a 2026-07
+1106001;São Paulo (RM);Banana-da-terra;427;427;1991-01 a 2026-07
+1106020;São Paulo (RM);Maracujá;427;427;1991-01 a 2026-07
+1107096;São Paulo (RM);Peito;427;427;1991-01 a 2026-07
+1107090;São Paulo (RM);Lagarto redondo;427;427;1991-01 a 2026-07
+1108005;São Paulo (RM);Peixe - cavalinha;427;427;1991-01 a 2026-07
+3201013;São Paulo (RM);Ventilador;427;427;1991-01 a 2026-07
+1103004;São Paulo (RM);Inhame;427;427;1991-01 a 2026-07
+2201003;São Paulo (RM);Carvão vegetal;427;427;1991-01 a 2026-07
+1115050;São Paulo (RM);Salsicha em conserva;427;427;1991-01 a 2026-07
+1108088;São Paulo (RM);Peixe - dourada;427;427;1991-01 a 2026-07
+1114023;São Paulo (RM);Café solúvel;427;427;1991-01 a 2026-07
+1109056;São Paulo (RM);Carne-seca e de sol;427;391;1994-01 a 2026-07
+1111031;São Paulo (RM);Manteiga;427;361;"1991-01 a 2006-06; 2012-01 a 2026-07"
+1116022;São Paulo (RM);Colorau;361;361;"1991-01 a 2006-06; 2012-01 a 2026-07"
+1107085;São Paulo (RM);Filé-mignon;361;361;"1991-01 a 2006-06; 2012-01 a 2026-07"
+7201003;São Paulo (RM);Ingresso para jogo;427;361;"1991-01 a 2006-06; 2012-01 a 2026-07"
+1108032;São Paulo (RM);Peixe - serra;348;348;1991-01 a 2019-12
+1108013;São Paulo (RM);Camarão;427;348;1991-01 a 2019-12
+1108011;São Paulo (RM);Peixe - tainha;348;348;1991-01 a 2019-12
+1108019;São Paulo (RM);Peixe - cavala;348;348;1991-01 a 2019-12
+2103009;São Paulo (RM);Material de pintura;348;348;1991-01 a 2019-12
+1103017;São Paulo (RM);Abóbora;348;348;1991-01 a 2019-12
+4102011;São Paulo (RM);Roupa de dormir feminina;348;348;1991-01 a 2019-12
+1114029;São Paulo (RM);Chá;348;348;1991-01 a 2019-12
+7201095;São Paulo (RM);Pacote turístico;427;348;1991-01 a 2019-12
+1115051;São Paulo (RM);Carne em conserva;348;348;1991-01 a 2019-12
+1103005;São Paulo (RM);Mandioca (aipim);427;344;"1991-01 a 1999-07; 2006-07 a 2026-07"
+4103007;São Paulo (RM);Vestido infantil;427;344;"1991-01 a 1999-07; 2006-07 a 2026-07"
+1116041;São Paulo (RM);Vinagre;427;344;"1991-01 a 1999-07; 2006-07 a 2026-07"
+1106004;São Paulo (RM);Abacate;331;331;"1991-01 a 2011-12; 2020-01 a 2026-07"
+7201083;São Paulo (RM);Material esportivo;331;331;"1991-01 a 2011-12; 2020-01 a 2026-07"
+1108045;São Paulo (RM);Caranguejo;331;331;"1991-01 a 2011-12; 2020-01 a 2026-07"
+2104013;São Paulo (RM);Inseticida;331;331;"1991-01 a 2011-12; 2020-01 a 2026-07"
+1104004;São Paulo (RM);Açúcar cristal;427;331;"1991-01 a 2011-12; 2020-01 a 2026-07"
+4102012;São Paulo (RM);Roupa de banho feminina;331;331;"1991-01 a 2011-12; 2020-01 a 2026-07"
+1112025;São Paulo (RM);Pão de queijo;324;324;1999-08 a 2026-07
+1113014;São Paulo (RM);Azeite de oliva;324;324;1999-08 a 2026-07
+4103001;São Paulo (RM);Uniforme escolar;427;324;1999-08 a 2026-07
+5102037;São Paulo (RM);Pintura de veículo;324;324;1999-08 a 2026-07
+6102003;São Paulo (RM);Óculos sem grau;324;324;1999-08 a 2026-07
+1106027;São Paulo (RM);Tangerina;427;324;1999-08 a 2026-07
+1106006;São Paulo (RM);Banana - maçã;427;324;1999-08 a 2026-07
+1114004;São Paulo (RM);Açaí (emulsão);324;324;1999-08 a 2026-07
+4101004;São Paulo (RM);Terno;348;282;"1991-01 a 2006-06; 2012-01 a 2019-12"
+1108009;São Paulo (RM);Peixe - pescadinha;282;282;"1991-01 a 2006-06; 2012-01 a 2019-12"
+1106012;São Paulo (RM);Laranja - lima;282;282;"1991-01 a 2006-06; 2012-01 a 2019-12"
+1108015;São Paulo (RM);Peixe - vermelho;282;282;"1991-01 a 2006-06; 2012-01 a 2019-12"
+1107009;São Paulo (RM);Fígado;427;278;"1991-01 a 1999-07; 2012-01 a 2026-07"
+1108072;São Paulo (RM);Peixe - curimatã;278;278;"1991-01 a 1999-07; 2012-01 a 2026-07"
+1115017;São Paulo (RM);Pepino em conserva;278;278;"1991-01 a 1999-07; 2012-01 a 2026-07"
+1105004;São Paulo (RM);Coentro;427;278;"1991-01 a 1999-07; 2012-01 a 2026-07"
+1115056;São Paulo (RM);Sopa desidratada;427;277;"1991-01 a 1993-12; 2006-07 a 2026-07"
+1102009;São Paulo (RM);Amido de milho;348;265;"1991-01 a 1999-07; 2006-07 a 2019-12"
+3201012;São Paulo (RM);Liquidificador;348;265;"1991-01 a 1999-07; 2006-07 a 2019-12"
+2104005;São Paulo (RM);Água sanitária;427;265;"1991-01 a 1999-07; 2006-07 a 2019-12"
+4201006;São Paulo (RM);Sandália / chinelo masculino;348;265;"1991-01 a 1999-07; 2006-07 a 2019-12"
+1108002;São Paulo (RM);Peixe - anchova;265;265;"1991-01 a 2006-06; 2020-01 a 2026-07"
+1103002;São Paulo (RM);Batata-doce;265;265;"1991-01 a 2006-06; 2020-01 a 2026-07"
+1116026;São Paulo (RM);Fermento;348;265;"1991-01 a 1999-07; 2006-07 a 2019-12"
+1109023;São Paulo (RM);Bacalhau;331;264;"1991-01 a 1993-12; 1999-08 a 2011-12; 2020-01 a 2026-07"
+1107081;São Paulo (RM);Cupim;258;258;"1999-08 a 2006-06; 2012-01 a 2026-07"
+1107031;São Paulo (RM);Carne de carneiro;258;258;"1999-08 a 2006-06; 2012-01 a 2026-07"
+1109012;São Paulo (RM);Salame;258;258;"1999-08 a 2006-06; 2012-01 a 2026-07"
+5104003;São Paulo (RM);Óleo diesel;258;258;"1999-08 a 2006-06; 2012-01 a 2026-07"
+7201010;São Paulo (RM);Instrumento musical;324;258;"1999-08 a 2006-06; 2012-01 a 2026-07"
+1107008;São Paulo (RM);Tripa e bucho;252;252;1991-01 a 2011-12
+4103014;São Paulo (RM);Lingerie infantil;252;252;1991-01 a 2011-12
+1107094;São Paulo (RM);Pá;427;252;1991-01 a 2011-12
+4102013;São Paulo (RM);Bermuda/short feminino;427;252;1991-01 a 2011-12
+2104002;São Paulo (RM);Vassoura;252;252;1991-01 a 2011-12
+1108076;São Paulo (RM);Peixe - acará;252;252;1991-01 a 2011-12
+1108053;São Paulo (RM);Peixe - piramutaba;252;252;1991-01 a 2011-12
+3101060;São Paulo (RM);Rede;252;252;1991-01 a 2011-12
+1108033;São Paulo (RM);Peixe - pargo;252;252;1991-01 a 2011-12
+1103027;São Paulo (RM);Quiabo;252;252;1991-01 a 2011-12
+4101008;São Paulo (RM);Cueca;427;248;"1991-01 a 1999-07; 2006-07 a 2011-12; 2020-01 a 2026-07"
+1106022;São Paulo (RM);Melão;331;248;"1991-01 a 1999-07; 2006-07 a 2011-12; 2020-01 a 2026-07"
+1102013;São Paulo (RM);Farinha vitaminada;245;245;1999-08 a 2019-12
+8103002;São Paulo (RM);Fotocópia;245;245;1999-08 a 2019-12
+8101001;São Paulo (RM);Creche;324;245;1999-08 a 2019-12
+1101079;São Paulo (RM);Milho em grão;245;245;1999-08 a 2019-12
+5101022;São Paulo (RM);Transporte hidroviário;245;245;1999-08 a 2019-12
+1115075;São Paulo (RM);Atum em conserva;324;245;1999-08 a 2019-12
+2103008;São Paulo (RM);Material de eletricidade;427;242;"1994-01 a 1999-07; 2012-01 a 2026-07"
+1115016;São Paulo (RM);Palmito em conserva;427;241;2006-07 a 2026-07
+1106084;São Paulo (RM);Goiaba;324;241;2006-07 a 2026-07
+1109088;São Paulo (RM);Hambúrguer;324;241;2006-07 a 2026-07
+1111012;São Paulo (RM);Creme de leite;324;241;2006-07 a 2026-07
+1108004;São Paulo (RM);Peixe - corvina;427;241;2006-07 a 2026-07
+7101034;São Paulo (RM);Cartório;324;241;2006-07 a 2026-07
+6201005;São Paulo (RM);Aparelho ortodôntico;427;241;2006-07 a 2026-07
+1102001;São Paulo (RM);Farinha de arroz;324;241;2006-07 a 2026-07
+1111051;São Paulo (RM);Leite com sabor;241;241;2006-07 a 2026-07
+1102010;São Paulo (RM);Flocos de milho;324;241;2006-07 a 2026-07
+1116048;São Paulo (RM);Caldo concentrado;324;241;2006-07 a 2026-07
+3301015;São Paulo (RM);Conserto de máquina de lavar roupa;324;241;2006-07 a 2026-07
+1102008;São Paulo (RM);Fubá de milho;427;241;2006-07 a 2026-07
+1116013;São Paulo (RM);Sal;427;241;2006-07 a 2026-07
+1114087;São Paulo (RM);Vinho;265;229;"1994-01 a 2006-06; 2020-01 a 2026-07"
+5102013;São Paulo (RM);Estacionamento;331;229;"1994-01 a 2006-06; 2020-01 a 2026-07"
+1115013;São Paulo (RM);Alimento infantil;228;228;"1999-08 a 2011-12; 2020-01 a 2026-07"
+2103031;São Paulo (RM);Ferramentas;228;228;"1999-08 a 2011-12; 2020-01 a 2026-07"
+7201067;São Paulo (RM);Material de caça e pesca;228;228;"1999-08 a 2011-12; 2020-01 a 2026-07"
+3201002;São Paulo (RM);Ar-condicionado;228;228;"1999-08 a 2011-12; 2020-01 a 2026-07"
+1115004;São Paulo (RM);Coco ralado;348;199;"1991-01 a 1999-07; 2012-01 a 2019-12"
+5101026;São Paulo (RM);Transporte escolar;427;186;1991-01 a 2006-06
+4102009;São Paulo (RM);Meia feminina;186;186;1991-01 a 2006-06
+4201029;São Paulo (RM);Bolsa e carteira masculina;186;186;1991-01 a 2006-06
+1101068;São Paulo (RM);Feijão - roxo;186;186;1991-01 a 2006-06
+1101064;São Paulo (RM);Feijão - jalo (enxofrão);186;186;1991-01 a 2006-06
+5102001;São Paulo (RM);Automóvel novo;427;186;1991-01 a 2006-06
+1106013;São Paulo (RM);Laranja - seleta;186;186;1991-01 a 2006-06
+5102030;São Paulo (RM);Som para veículo;186;186;1991-01 a 2006-06
+1109024;São Paulo (RM);Camarão seco salgado;186;186;1991-01 a 2006-06
+1110003;São Paulo (RM);Peru;186;186;1991-01 a 2006-06
+4201008;São Paulo (RM);Sandália / chinelo infantil;348;186;1991-01 a 2006-06
+3201050;São Paulo (RM);Chuveiro elétrico;361;186;1991-01 a 2006-06
+3201029;São Paulo (RM);Pilha;186;186;1991-01 a 2006-06
+1112012;São Paulo (RM);Pão de milho;186;186;1991-01 a 2006-06
+1102022;São Paulo (RM);Fécula de mandioca;186;186;1991-01 a 2006-06
+1115058;São Paulo (RM);Milho-verde em conserva;427;186;1991-01 a 2006-06
+7201097;São Paulo (RM);Alimento para animais (exceto cães);186;186;1991-01 a 2006-06
+1103022;São Paulo (RM);Jiló;186;186;1991-01 a 2006-06
+1201032;São Paulo (RM);Caldos;186;186;1991-01 a 2006-06
+1116062;São Paulo (RM);Pimenta do reino;186;186;1991-01 a 2006-06
+3102012;São Paulo (RM);Garrafa térmica;186;186;1991-01 a 2006-06
+1116055;São Paulo (RM);Cominho;186;186;1991-01 a 2006-06
+1112019;São Paulo (RM);Bolo;427;186;1991-01 a 2006-06
+1116071;São Paulo (RM);Tempero misto;427;186;1991-01 a 2006-06
+1108051;São Paulo (RM);Peixe - traíra;186;186;1991-01 a 2006-06
+1108057;São Paulo (RM);Peixe - surubim;186;186;1991-01 a 2006-06
+5101010;São Paulo (RM);Passagem aérea;427;185;"1991-01 a 1993-12; 1999-08 a 2011-12"
+1109058;São Paulo (RM);Carne de porco salgada e defumada;427;182;"1991-01 a 1999-07; 2020-01 a 2026-07"
+3102010;São Paulo (RM);Utensílios de plástico;427;182;"1991-01 a 1999-07; 2020-01 a 2026-07"
+2101012;São Paulo (RM);Mudança;361;182;"1991-01 a 1999-07; 2020-01 a 2026-07"
+1114085;São Paulo (RM);Outras bebidas alcoólicas;427;182;"1991-01 a 1999-07; 2020-01 a 2026-07"
+1116023;São Paulo (RM);Caldo de tucupi;179;179;"1999-08 a 2006-06; 2012-01 a 2019-12"
+7203004;São Paulo (RM);Filmadora;179;179;"1999-08 a 2006-06; 2012-01 a 2019-12"
+3202013;São Paulo (RM);Antena;179;179;"1999-08 a 2006-06; 2012-01 a 2019-12"
+6301004;São Paulo (RM);Produto para barba;324;179;"1999-08 a 2006-06; 2012-01 a 2019-12"
+1105019;São Paulo (RM);Brócolis;324;179;"1999-08 a 2006-06; 2012-01 a 2019-12"
+1108028;São Paulo (RM);Peixe - dourado;179;179;"1999-08 a 2006-06; 2012-01 a 2019-12"
+1105013;São Paulo (RM);Agrião;348;179;"1999-08 a 2006-06; 2012-01 a 2019-12"
+2103048;São Paulo (RM);Areia;241;175;2012-01 a 2026-07
+1201051;São Paulo (RM);Outras bebidas alcoólicas;427;175;2012-01 a 2026-07
+2103005;São Paulo (RM);Ferragens;361;175;2012-01 a 2026-07
+1108087;São Paulo (RM);Peixe - tambaqui;175;175;2012-01 a 2026-07
+4102004;São Paulo (RM);Saia;427;175;2012-01 a 2026-07
+1104018;São Paulo (RM);Balas;361;175;2012-01 a 2026-07
+2103049;São Paulo (RM);Pedras;175;175;2012-01 a 2026-07
+1116001;São Paulo (RM);Leite de coco;258;175;2012-01 a 2026-07
+1107097;São Paulo (RM);Capa de filé;241;175;2012-01 a 2026-07
+1108049;São Paulo (RM);Peixe - castanha;175;175;2012-01 a 2026-07
+6202004;São Paulo (RM);Hospitalização e cirurgia;427;175;2012-01 a 2026-07
+5104005;São Paulo (RM);Gás veicular;175;175;2012-01 a 2026-07
+6202003;São Paulo (RM);Exame de laboratório;427;169;"1991-01 a 1999-07; 2006-07 a 2011-12"
+1104060;São Paulo (RM);Doce de frutas em pasta;252;169;"1991-01 a 1999-07; 2006-07 a 2011-12"
+4103024;São Paulo (RM);Saia infantil;169;169;"1991-01 a 1999-07; 2006-07 a 2011-12"
+1108016;São Paulo (RM);Peixe - bagre;169;169;"1991-01 a 1999-07; 2006-07 a 2011-12"
+3103002;São Paulo (RM);Roupa de mesa;252;169;"1991-01 a 1999-07; 2006-07 a 2011-12"
+7201068;São Paulo (RM);Motel;348;169;"1991-01 a 1999-07; 2006-07 a 2011-12"
+1104023;São Paulo (RM);Chocolate em barra e bombom;427;169;"1991-01 a 1999-07; 2006-07 a 2011-12"
+1102016;São Paulo (RM);Flocos de cereais;252;169;"1991-01 a 1999-07; 2006-07 a 2011-12"
+4401001;São Paulo (RM);Tecido;427;162;2006-07 a 2019-12
+1115053;São Paulo (RM);Patê;162;162;2006-07 a 2019-12
+7201090;São Paulo (RM);Hospedagem;427;162;2006-07 a 2019-12
+8101002;São Paulo (RM);Pré-escola;324;162;2006-07 a 2019-12
+6101051;São Paulo (RM);Oftalmológico;324;162;"1999-08 a 2006-06; 2020-01 a 2026-07"
+1108006;São Paulo (RM);Peixe;162;162;2006-07 a 2019-12
+1106051;São Paulo (RM);Morango;162;162;"1999-08 a 2006-06; 2020-01 a 2026-07"
+1106023;São Paulo (RM);Pera;427;162;2006-07 a 2019-12
+1201009;São Paulo (RM);Cafezinho;427;162;"1999-08 a 2006-06; 2020-01 a 2026-07"
+5102019;São Paulo (RM);Lubrificação e lavagem;241;162;2006-07 a 2019-12
+1106011;São Paulo (RM);Laranja - baía;265;162;"1999-08 a 2006-06; 2020-01 a 2026-07"
+1105006;São Paulo (RM);Couve-flor;348;162;2006-07 a 2019-12
+6101005;São Paulo (RM);Hepatoprotetor;186;150;1994-01 a 2006-06
+6202013;São Paulo (RM);Radiografia;149;149;1999-08 a 2011-12
+5102007;São Paulo (RM);Óleo lubrificante;324;149;1999-08 a 2011-12
+6202006;São Paulo (RM);Exame de imagem;324;149;1999-08 a 2011-12
+6301012;São Paulo (RM);Talco;149;149;1999-08 a 2011-12
+1101049;São Paulo (RM);Feijão - manteiga;149;149;1999-08 a 2011-12
+8102002;São Paulo (RM);Assinatura de jornal;149;149;1999-08 a 2011-12
+6301020;São Paulo (RM);Artigos de maquiagem;427;149;1999-08 a 2011-12
+1115008;São Paulo (RM);Feijoada em conserva;245;149;1999-08 a 2011-12
+1201049;São Paulo (RM);Chopp;149;149;1999-08 a 2011-12
+7201051;São Paulo (RM);Teatro;149;149;1999-08 a 2011-12
+1103021;São Paulo (RM);Chuchu;252;149;1999-08 a 2011-12
+2104025;São Paulo (RM);Lata de lixo;149;149;1999-08 a 2011-12
+3201008;São Paulo (RM);Máquina de secar roupa;149;149;1999-08 a 2011-12
+1111046;São Paulo (RM);Nata;149;149;1999-08 a 2011-12
+3201027;São Paulo (RM);Lâmpada;149;149;1999-08 a 2011-12
+4401005;São Paulo (RM);Acortinado (mosquiteiro);245;149;1999-08 a 2011-12
+7101090;São Paulo (RM);Conselho de classe;149;149;1999-08 a 2011-12
+7201006;São Paulo (RM);Clube;348;149;1999-08 a 2011-12
+1104066;São Paulo (RM);Doce de leite;149;149;1999-08 a 2011-12
+1107010;São Paulo (RM);Outras vísceras;149;149;1999-08 a 2011-12
+4301002;São Paulo (RM);Joia;427;149;1999-08 a 2011-12
+8104005;São Paulo (RM);Autoescola;241;145;"2006-07 a 2011-12; 2020-01 a 2026-07"
+1107093;São Paulo (RM);Músculo;427;145;"2006-07 a 2011-12; 2020-01 a 2026-07"
+8101008;São Paulo (RM);Educação de jovens e adultos;145;145;"2006-07 a 2011-12; 2020-01 a 2026-07"
+1116095;São Paulo (RM);Molho de soja;145;145;"2006-07 a 2011-12; 2020-01 a 2026-07"
+3301002;São Paulo (RM);Conserto de refrigerador;324;145;"2006-07 a 2011-12; 2020-01 a 2026-07"
+1105010;São Paulo (RM);Repolho;427;145;"2006-07 a 2011-12; 2020-01 a 2026-07"
+1106003;São Paulo (RM);Abacaxi;427;145;"2006-07 a 2011-12; 2020-01 a 2026-07"
+4102003;São Paulo (RM);Agasalho feminino;427;145;"2006-07 a 2011-12; 2020-01 a 2026-07"
+4101005;São Paulo (RM);Agasalho masculino;427;145;"2006-07 a 2011-12; 2020-01 a 2026-07"
+6101016;São Paulo (RM);Material para curativo;252;133;"1994-01 a 1999-07; 2006-07 a 2011-12"
+3101017;São Paulo (RM);Colchão;427;115;"1991-01 a 1993-12; 2020-01 a 2026-07"
+1106008;São Paulo (RM);Banana - prata;427;103;1991-01 a 1999-07
+1105021;São Paulo (RM);Caruru;103;103;1991-01 a 1999-07
+1105017;São Paulo (RM);Almeirão;103;103;1991-01 a 1999-07
+7101002;São Paulo (RM);Sapateiro;103;103;1991-01 a 1999-07
+1108099;São Paulo (RM);Mariscos;103;103;1991-01 a 1999-07
+4103017;São Paulo (RM);Fralda;252;103;1991-01 a 1999-07
+4201009;São Paulo (RM);Sandália de borracha;103;103;1991-01 a 1999-07
+4201028;São Paulo (RM);Guarda-chuva;103;103;1991-01 a 1999-07
+1108021;São Paulo (RM);Peixe - galo;169;103;1991-01 a 1999-07
+1108001;São Paulo (RM);Filé de peixe;186;103;1991-01 a 1999-07
+1106041;São Paulo (RM);Banana-marmelo;103;103;1991-01 a 1999-07
+1108044;São Paulo (RM);Peixe cioba;103;103;1991-01 a 1999-07
+1104052;São Paulo (RM);Chocolate e achocolatado em pó;427;103;1991-01 a 1999-07
+6101008;São Paulo (RM);Anti-hemorrágicos e antianêmicos;103;103;1991-01 a 1999-07
+6101011;São Paulo (RM);Hormonal;427;103;1991-01 a 1999-07
+6101003;São Paulo (RM);Anti-inflamatório e antirreumático;427;103;1991-01 a 1999-07
+5201001;São Paulo (RM);Correio;103;103;1991-01 a 1999-07
+5104002;São Paulo (RM);Etanol;427;103;1991-01 a 1999-07
+5102004;São Paulo (RM);Emplacamento e licença;427;103;1991-01 a 1999-07
+5102010;São Paulo (RM);Pneu;427;103;1991-01 a 1999-07
+6301010;São Paulo (RM);Produto para unha;427;103;1991-01 a 1999-07
+3102009;São Paulo (RM);Utensílios de vidro e louça;427;103;1991-01 a 1999-07
+3102014;São Paulo (RM);Copo de vidro;186;103;1991-01 a 1999-07
+3201005;São Paulo (RM);Enceradeira;103;103;1991-01 a 1999-07
+3201042;São Paulo (RM);Ozonizador;186;103;1991-01 a 1999-07
+1112017;São Paulo (RM);Pão doce;427;103;1991-01 a 1999-07
+1114001;São Paulo (RM);Suco de frutas;427;103;1991-01 a 1999-07
+1112018;São Paulo (RM);Pão de forma;427;103;1991-01 a 1999-07
+3201064;São Paulo (RM);Tanque elétrico para roupa;103;103;1991-01 a 1999-07
+3102024;São Paulo (RM);Outros utensílios de metal;103;103;1991-01 a 1999-07
+7302002;São Paulo (RM);Assinatura de jornal;103;103;1991-01 a 1999-07
+3102005;São Paulo (RM);Tapete;427;103;1991-01 a 1999-07
+1103029;São Paulo (RM);Vagem;103;103;1991-01 a 1999-07
+7202045;São Paulo (RM);Fósforos;103;103;1991-01 a 1999-07
+7301004;São Paulo (RM);Livros didáticos;103;103;1991-01 a 1999-07
+7301020;São Paulo (RM);Livros e revistas técnicas;103;103;1991-01 a 1999-07
+4103008;São Paulo (RM);Bermuda/short infantil;427;102;"1991-01 a 1993-12; 2006-07 a 2011-12"
+1103026;São Paulo (RM);Pimentão;427;96;2012-01 a 2019-12
+1102023;São Paulo (RM);Farinha de mandioca;427;96;2012-01 a 2019-12
+4201004;São Paulo (RM);Sapato infantil;427;96;2012-01 a 2019-12
+1108085;São Paulo (RM);Peixe - mapará;96;96;2012-01 a 2019-12
+1108112;São Paulo (RM);Peixe - pintado;96;96;2012-01 a 2019-12
+1108080;São Paulo (RM);Peixe - tilápia;175;96;2012-01 a 2019-12
+1108054;São Paulo (RM);Peixe - piau;96;96;2012-01 a 2019-12
+1108052;São Paulo (RM);Peixe - palombeta;96;96;2012-01 a 2019-12
+3301044;São Paulo (RM);Manutenção de microcomputador;96;96;2012-01 a 2019-12
+1106015;São Paulo (RM);Limão;361;96;2012-01 a 2019-12
+1107011;São Paulo (RM);Mocotó de boi;96;96;2012-01 a 2019-12
+1101075;São Paulo (RM);Feijão - branco;96;96;2012-01 a 2019-12
+8104001;São Paulo (RM);Curso preparatório;241;96;2012-01 a 2019-12
+8102005;São Paulo (RM);Livro;245;96;2012-01 a 2019-12
+1106019;São Paulo (RM);Manga;324;96;2012-01 a 2019-12
+4301004;São Paulo (RM);Relógio de pulso;427;96;2012-01 a 2019-12
+1108008;São Paulo (RM);Peixe - namorado;96;96;2012-01 a 2019-12
+7101014;São Paulo (RM);Depilação;175;96;2012-01 a 2019-12
+1102040;São Paulo (RM);Massa para pastel;83;83;1999-08 a 2006-06
+1101082;São Paulo (RM);Amendoim em grão;83;83;1999-08 a 2006-06
+1102038;São Paulo (RM);Massa para pizza;83;83;1999-08 a 2006-06
+1102028;São Paulo (RM);Cremogema;83;83;1999-08 a 2006-06
+7201055;São Paulo (RM);Parque de diversões;83;83;1999-08 a 2006-06
+7201066;São Paulo (RM);Aluguel de fita de vídeo-game;83;83;1999-08 a 2006-06
+7201053;São Paulo (RM);Fita de vídeo-game;83;83;1999-08 a 2006-06
+1101080;São Paulo (RM);Milho em espiga;83;83;1999-08 a 2006-06
+1113044;São Paulo (RM);Óleo de canola;83;83;1999-08 a 2006-06
+1112021;São Paulo (RM);Massa para pão de queijo;83;83;1999-08 a 2006-06
+1112040;São Paulo (RM);Torta doce;83;83;1999-08 a 2006-06
+1112034;São Paulo (RM);Rosca doce;83;83;1999-08 a 2006-06
+3301012;São Paulo (RM);Conserto de vídeo-cassete;83;83;1999-08 a 2006-06
+1114086;São Paulo (RM);Aguardente;83;83;1999-08 a 2006-06
+1112051;São Paulo (RM);Pão integral;83;83;1999-08 a 2006-06
+3102032;São Paulo (RM);Chupeta e bico;83;83;1999-08 a 2006-06
+3102089;São Paulo (RM);Guardanapo de papel;83;83;1999-08 a 2006-06
+3102070;São Paulo (RM);Espelho;83;83;1999-08 a 2006-06
+3201044;São Paulo (RM);Aspirador de pó;83;83;1999-08 a 2006-06
+1111025;São Paulo (RM);Queijo parmesão;83;83;1999-08 a 2006-06
+3102035;São Paulo (RM);Flores naturais;179;83;1999-08 a 2006-06
+5102054;São Paulo (RM);Camioneta;83;83;1999-08 a 2006-06
+6101013;São Paulo (RM);Psicotrópico e anorexígeno;427;83;1999-08 a 2006-06
+1104095;São Paulo (RM);Beiju;83;83;1999-08 a 2006-06
+6301013;São Paulo (RM);Produto para limpeza de pele;83;83;1999-08 a 2006-06
+1106009;São Paulo (RM);Caqui;83;83;1999-08 a 2006-06
+1105018;São Paulo (RM);Cebolinha;83;83;1999-08 a 2006-06
+7101004;São Paulo (RM);Tinturaria e lavanderia;83;83;1999-08 a 2006-06
+1101021;São Paulo (RM);Coco-da-baía;83;83;1999-08 a 2006-06
+9101008;São Paulo (RM);Plano de telefonia móvel;324;83;1999-08 a 2006-06
+7101076;São Paulo (RM);Serviço bancário;324;83;1999-08 a 2006-06
+7101038;São Paulo (RM);Serviço funerário;83;83;1999-08 a 2006-06
+1104096;São Paulo (RM);Schimier de frutas;83;83;1999-08 a 2006-06
+6101064;São Paulo (RM);Antidiabético;162;83;1999-08 a 2006-06
+6101009;São Paulo (RM);Gastroprotetor;427;83;1999-08 a 2006-06
+1105008;São Paulo (RM);Mostarda;83;83;1999-08 a 2006-06
+5102005;São Paulo (RM);Seguro voluntário de veículo;324;83;1999-08 a 2006-06
+5101012;São Paulo (RM);Ônibus internacional;83;83;1999-08 a 2006-06
+1108020;São Paulo (RM);Peixe - cocoroca;83;83;1999-08 a 2006-06
+1108027;São Paulo (RM);Peixe - espada;83;83;1999-08 a 2006-06
+4101015;São Paulo (RM);Conjunto esportivo masculino;83;83;1999-08 a 2006-06
+4102014;São Paulo (RM);Conjunto esportivo feminino;83;83;1999-08 a 2006-06
+4103013;São Paulo (RM);Meia infantil;83;83;1999-08 a 2006-06
+1108058;São Paulo (RM);Peixe - albacora;83;83;1999-08 a 2006-06
+4103021;São Paulo (RM);Cueca infantil;83;83;1999-08 a 2006-06
+5101009;São Paulo (RM);Ferry-boat;83;83;1999-08 a 2006-06
+5101007;São Paulo (RM);Ônibus interestadual;324;83;1999-08 a 2006-06
+4103051;São Paulo (RM);Roupa de banho infantil;83;83;1999-08 a 2006-06
+1106024;São Paulo (RM);Pêssego;83;83;1999-08 a 2006-06
+1108035;São Paulo (RM);Peixe - pampo;83;83;1999-08 a 2006-06
+1108040;São Paulo (RM);Peixe - salmonete;83;83;1999-08 a 2006-06
+1108048;São Paulo (RM);Peixe - xerelete;83;83;1999-08 a 2006-06
+1110012;São Paulo (RM);Coxa de frango;83;83;1999-08 a 2006-06
+1109009;São Paulo (RM);Chouriço e paio;83;83;1999-08 a 2006-06
+4103040;São Paulo (RM);Conjunto de saia e blusa infantil;83;83;1999-08 a 2006-06
+1104014;São Paulo (RM);Rapadura;83;83;1999-08 a 2006-06
+8101018;São Paulo (RM);Livro didático;83;83;1999-08 a 2006-06
+7203006;São Paulo (RM);Fita de vídeo virgem;83;83;1999-08 a 2006-06
+7203001;São Paulo (RM);Máquina fotográfica;179;83;1999-08 a 2006-06
+7201093;São Paulo (RM);Fita cassete virgem;83;83;1999-08 a 2006-06
+7201085;São Paulo (RM);Fita de vídeo gravada;83;83;1999-08 a 2006-06
+7203002;São Paulo (RM);Filme e flash descartável;149;83;1999-08 a 2006-06
+3201034;São Paulo (RM);Máquina de lavar louça;83;83;1999-08 a 2006-06
+3201033;São Paulo (RM);Freezer;83;83;1999-08 a 2006-06
+3101004;São Paulo (RM);Móvel para jardim;83;83;1999-08 a 2006-06
+3102004;São Paulo (RM);Relógio despertador;83;83;1999-08 a 2006-06
+1201050;São Paulo (RM);Aguardente;83;83;1999-08 a 2006-06
+2101008;São Paulo (RM);Compra de água;83;83;1999-08 a 2006-06
+3102015;São Paulo (RM);Mamadeira;83;83;1999-08 a 2006-06
+3102016;São Paulo (RM);Bujão de gás vazio;83;83;1999-08 a 2006-06
+2103012;São Paulo (RM);Material de vidro;186;83;1999-08 a 2006-06
+8101024;São Paulo (RM);Livro e revista técnica;83;83;1999-08 a 2006-06
+1107060;São Paulo (RM);Bife rolé;83;83;1999-08 a 2006-06
+1106097;São Paulo (RM);Cupuaçú;83;83;1999-08 a 2006-06
+1106026;São Paulo (RM);Acerola;83;83;1999-08 a 2006-06
+1110014;São Paulo (RM);Asa de frango;83;83;1999-08 a 2006-06
+1104069;São Paulo (RM);Adoçante artificial;83;83;1999-08 a 2006-06
+1104064;São Paulo (RM);Pamonha;83;83;1999-08 a 2006-06
+1104059;São Paulo (RM);Doce de frutas em calda;83;83;1999-08 a 2006-06
+1104031;São Paulo (RM);Mel de abelha;83;83;1999-08 a 2006-06
+1108065;São Paulo (RM);Ostra;83;83;1999-08 a 2006-06
+3301024;São Paulo (RM);Manutenção de caixa d'água, fossa, etc.;83;83;1999-08 a 2006-06
+4101013;São Paulo (RM);Paletó e blazer;83;83;1999-08 a 2006-06
+4101011;São Paulo (RM);Meia masculina;83;83;1999-08 a 2006-06
+8102004;São Paulo (RM);Revista;324;79;2020-01 a 2026-07
+8104004;São Paulo (RM);Curso de informática;241;79;2020-01 a 2026-07
+1108023;São Paulo (RM);Peixe - atum;79;79;2020-01 a 2026-07
+3301022;São Paulo (RM);Reforma de estofado;324;79;2020-01 a 2026-07
+1111021;São Paulo (RM);Requeijão;162;79;2020-01 a 2026-07
+1103025;São Paulo (RM);Pepino;265;79;2020-01 a 2026-07
+1102012;São Paulo (RM);Farinha de trigo;427;79;2020-01 a 2026-07
+1108012;São Paulo (RM);Peixe - sardinha;427;79;2020-01 a 2026-07
+1107208;São Paulo (RM);Picanha;79;79;2020-01 a 2026-07
+6101148;São Paulo (RM);Neurológico;79;79;2020-01 a 2026-07
+1108092;São Paulo (RM);Peixe - filhote;79;79;2020-01 a 2026-07
+4301001;São Paulo (RM);Bijuteria;324;79;2020-01 a 2026-07
+4201040;São Paulo (RM);Mochila;79;79;2020-01 a 2026-07
+4401002;São Paulo (RM);Artigos de armarinho;427;79;2020-01 a 2026-07
+1104067;São Paulo (RM);Açúcar demerara;79;79;2020-01 a 2026-07
+5102051;São Paulo (RM);Aluguel de veículo;79;79;2020-01 a 2026-07
+3301006;São Paulo (RM);Conserto de televisor;241;79;2020-01 a 2026-07
+3202003;São Paulo (RM);Aparelho de som;427;79;2020-01 a 2026-07
+1114091;São Paulo (RM);Chá mate (erva mate);79;79;2020-01 a 2026-07
+4201015;São Paulo (RM);Bolsa;427;79;2020-01 a 2026-07
+2104016;São Paulo (RM);Esponja de limpeza;427;79;2020-01 a 2026-07
+2104015;São Paulo (RM);Sabão em barra;324;79;2020-01 a 2026-07
+2103055;São Paulo (RM);Telha;175;79;2020-01 a 2026-07
+2104003;São Paulo (RM);Saco para lixo;79;79;2020-01 a 2026-07
+2103038;São Paulo (RM);Madeira e taco;79;79;2020-01 a 2026-07
+8102001;São Paulo (RM);Jornal diário;324;79;2020-01 a 2026-07
+2104019;São Paulo (RM);Sabão líquido;79;79;2020-01 a 2026-07
+2104020;São Paulo (RM);Limpador multiuso;162;79;2020-01 a 2026-07
+3101016;São Paulo (RM);Móvel infantil;175;79;2020-01 a 2026-07
+1114003;São Paulo (RM);Polpa de fruta (congelada);79;79;2020-01 a 2026-07
+3103003;São Paulo (RM);Roupa de banho;427;79;2020-01 a 2026-07
+3102337;São Paulo (RM);Utensílios para bebê;79;79;2020-01 a 2026-07
+1108087;Brasil;Peixe - tambaqui;175;76;2012-01 a 2018-04
+1108054;Brasil;Peixe - piau;96;76;2012-01 a 2018-04
+1101075;Brasil;Feijão - branco;96;76;2012-01 a 2018-04
+1108072;Brasil;Peixe - curimatã;278;76;2012-01 a 2018-04
+1108009;Brasil;Peixe - pescadinha;282;76;2012-01 a 2018-04
+1108011;Brasil;Peixe - tainha;348;76;2012-01 a 2018-04
+1115016;Brasil;Palmito em conserva;427;76;2012-01 a 2018-04
+1108099;Brasil;Mariscos;103;67;1994-01 a 1999-07
+6101011;Brasil;Hormonal;427;67;1994-01 a 1999-07
+6301001;São Paulo (RM);Produto para cabelo;427;67;1994-01 a 1999-07
+2104045;São Paulo (RM);Filtro de papel para café;103;67;1994-01 a 1999-07
+6301015;São Paulo (RM);Absorvente higiênico;427;67;1994-01 a 1999-07
+1102016;Brasil;Flocos de cereais;252;67;1994-01 a 1999-07
+1102009;Brasil;Amido de milho;348;67;1994-01 a 1999-07
+7201083;Brasil;Material esportivo;331;67;1994-01 a 1999-07
+7202045;Brasil;Fósforos;103;67;1994-01 a 1999-07
+7301020;Brasil;Livros e revistas técnicas;103;67;1994-01 a 1999-07
+2104045;Brasil;Filtro de papel para café;103;67;1994-01 a 1999-07
+3201050;Brasil;Chuveiro elétrico;361;67;1994-01 a 1999-07
+2201003;Brasil;Carvão vegetal;427;67;1994-01 a 1999-07
+6101008;Brasil;Anti-hemorrágicos e antianêmicos;103;67;1994-01 a 1999-07
+5201004;São Paulo (RM);Telefone público;103;67;1994-01 a 1999-07
+1108051;Brasil;Peixe - traíra;186;67;1994-01 a 1999-07
+4102011;Brasil;Roupa de dormir feminina;348;67;1994-01 a 1999-07
+4201028;Brasil;Guarda-chuva;103;67;1994-01 a 1999-07
+4101006;São Paulo (RM);Bermuda/short masculino;427;67;1994-01 a 1999-07
+6301015;Brasil;Absorvente higiênico;427;67;1994-01 a 1999-07
+1107085;Brasil;Filé-mignon;361;67;1994-01 a 1999-07
+1108021;Brasil;Peixe - galo;169;67;1994-01 a 1999-07
+7201001;São Paulo (RM);Cinema;348;66;2006-07 a 2011-12
+8104006;São Paulo (RM);Atividades físicas;241;66;2006-07 a 2011-12
+7101036;São Paulo (RM);Despachante;324;66;2006-07 a 2011-12
+6201008;São Paulo (RM);Tratamento psicológico e fisioterápico;149;66;2006-07 a 2011-12
+6201006;São Paulo (RM);Artigos ortopédicos;66;66;2006-07 a 2011-12
+8104009;São Paulo (RM);Escolinha de esporte;66;66;2006-07 a 2011-12
+3201007;São Paulo (RM);Ferro elétrico;348;66;2006-07 a 2011-12
+1116033;São Paulo (RM);Maionese;427;66;2006-07 a 2011-12
+2104014;São Paulo (RM);Cera para assoalho;252;66;2006-07 a 2011-12
+2103022;São Paulo (RM);Vitrificação (sinteco, poliuretano);66;66;2006-07 a 2011-12
+3201003;São Paulo (RM);Máquina de costura;252;66;2006-07 a 2011-12
+8101004;São Paulo (RM);Ensino médio;324;66;2006-07 a 2011-12
+7201008;São Paulo (RM);Disco laser;252;66;2006-07 a 2011-12
+6301014;São Paulo (RM);Desodorante;427;66;2006-07 a 2011-12
+1108022;São Paulo (RM);Peixe - manjuba;66;66;2006-07 a 2011-12
+4103031;São Paulo (RM);Conjunto infantil;324;66;2006-07 a 2011-12
+1108050;São Paulo (RM);Peixe - pratiqueira (parati);66;66;2006-07 a 2011-12
+1106028;São Paulo (RM);Uva;427;66;2006-07 a 2011-12
+7101008;São Paulo (RM);Barbeiro;252;66;2006-07 a 2011-12
+5102006;São Paulo (RM);Multa;241;66;2006-07 a 2011-12
+1104032;São Paulo (RM);Sorvete;324;66;2006-07 a 2011-12
+1113020;São Paulo (RM);Banha de porco;66;66;2006-07 a 2011-12
+3301023;São Paulo (RM);Conserto de bomba d'água;149;66;2006-07 a 2011-12
+1105012;São Paulo (RM);Cheiro-verde;427;66;2006-07 a 2011-12
+6101050;São Paulo (RM);Preservativo masculino;66;66;2006-07 a 2011-12
+1104028;São Paulo (RM);Gelatina;149;66;2006-07 a 2011-12
+1115004;Brasil;Coco ralado;348;36;1991-01 a 1993-12
+3102014;Brasil;Copo de vidro;186;36;1991-01 a 1993-12
+2101003;São Paulo (RM);Imposto predial;186;36;1991-01 a 1993-12
+3201042;Brasil;Ozonizador;186;36;1991-01 a 1993-12
+3201064;Brasil;Tanque elétrico para roupa;103;36;1991-01 a 1993-12
+2101012;Brasil;Mudança;361;36;1991-01 a 1993-12
+1115058;Brasil;Milho-verde em conserva;427;36;1991-01 a 1993-12
+3102007;São Paulo (RM);Utensílios de metal;427;36;1991-01 a 1993-12
+2101003;Brasil;Imposto predial;186;36;1991-01 a 1993-12
+2104008;São Paulo (RM);Detergente;427;36;1991-01 a 1993-12
+1104024;Brasil;Bombom;186;36;1991-01 a 1993-12
+3102024;Brasil;Outros utensílios de metal;103;36;1991-01 a 1993-12
+1112012;Brasil;Pão de milho;186;36;1991-01 a 1993-12
+6301007;São Paulo (RM);Produto para higiene bucal;427;36;1991-01 a 1993-12
+1104024;São Paulo (RM);Bombom;186;36;1991-01 a 1993-12
+4201006;Brasil;Sandália / chinelo masculino;348;36;1991-01 a 1993-12
+6101006;São Paulo (RM);Dermatológico;427;36;1991-01 a 1993-12
+4103024;Brasil;Saia infantil;169;36;1991-01 a 1993-12
+4102009;Brasil;Meia feminina;186;36;1991-01 a 1993-12
+4201008;Brasil;Sandália / chinelo infantil;348;36;1991-01 a 1993-12
+1108044;Brasil;Peixe cioba;103;36;1991-01 a 1993-12
+6101007;Brasil;Antialérgico e broncodilatador;427;36;1991-01 a 1993-12
+6101007;São Paulo (RM);Antialérgico e broncodilatador;427;36;1991-01 a 1993-12
+2103049;Brasil;Pedras;175;24;2012-01 a 2013-12
+1108112;Brasil;Peixe - pintado;96;24;2012-01 a 2013-12
+1108028;Brasil;Peixe - dourado;179;24;2012-01 a 2013-12
+1106012;Brasil;Laranja - lima;282;24;2012-01 a 2013-12
+1105013;Brasil;Agrião;348;24;2012-01 a 2013-12
+7101014;Brasil;Depilação;175;24;2012-01 a 2013-12

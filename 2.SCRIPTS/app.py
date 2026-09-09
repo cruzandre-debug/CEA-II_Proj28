@@ -7,7 +7,7 @@ from pathlib import Path
 
 # ── Configuração da página ────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="IPCA | CEA-IME USP",
+    page_title="IPCA & INPC | CEA-IME USP",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -41,27 +41,46 @@ GRUPO_EMOJI = {
     "Despesas pessoais": "💼", "Educação": "📚", "Comunicação": "📱",
     GRUPO_GERAL: "📊",
 }
-# Tipo de linha por grupo — ajuda a distinguir séries quando muitas estão selecionadas.
-# O plotly só tem 5 padrões tracejados nomeados além de "solid", então eles ciclam entre
-# os 9 grupos (a distinção principal continua sendo cor + nome na legenda/hover).
-_DASH_CYCLE = ["solid", "dash", "longdash", "dashdot", "longdashdot"]
-GRUPO_DASH = {g: _DASH_CYCLE[i % len(_DASH_CYCLE)] for i, g in enumerate(GRUPO_ORDER)}
-GRUPO_DASH[GRUPO_GERAL] = "dot"
+# Fonte = de qual índice/abrangência a série vem. IPCA só cobre RM São Paulo; o INPC traz
+# Brasil e RM São Paulo lado a lado — ver ESTRUTURA_PROJETO.md.
+FONTE_ORDER = ["IPCA (SP)", "INPC (SP)", "INPC (Brasil)"]
+FONTE_DASH = {"IPCA (SP)": "solid", "INPC (SP)": "dash", "INPC (Brasil)": "dot"}
 
 # ── Dados ─────────────────────────────────────────────────────────────────────
-DATA_PATH = (
-    Path(__file__).resolve().parent.parent
-    / "1.DADOS" / "1.2.DADOS_REFINADOS" / "IPCA_CONSOLIDADO.csv"
-)
+DATA_DIR = Path(__file__).resolve().parent.parent / "1.DADOS" / "1.2.DADOS_REFINADOS"
+
+# Nomes das colunas de variável divergem entre os dois CSVs (prefixo IPCA_/INPC_) — aqui
+# são renomeadas para um padrão comum antes de empilhar as duas fontes num único dataframe.
+_COLUNAS_VARIAVEL = ["VAR_MENSAL", "PESO_MENSAL", "CALC_VAR_12M", "CALC_VAR_ANO",
+                     "CALC_NUM_IND_2000", "CALC_NUM_IND_2005", "CALC_NUM_IND_2010"]
+_COLUNAS_COMUNS = ["CODIGO", "NOME_ATIVO", "GRUPO", "CATEGORIA_TIPO", "COMPLETUDE_INFO",
+                   "ANO_COD", "MES_COD", "MES", "FONTE"] + _COLUNAS_VARIAVEL
 
 @st.cache_data
 def load_data() -> pd.DataFrame:
-    df = pd.read_csv(DATA_PATH, sep=";", low_memory=False)
+    ipca = pd.read_csv(DATA_DIR / "IPCA_CONSOLIDADO.csv", sep=";", low_memory=False)
+    ipca = ipca.rename(columns={
+        "IPCA_VAR_MENSAL": "VAR_MENSAL", "IPCA_PESO_MENSAL": "PESO_MENSAL",
+        "CALC_IPCA_VAR_12M": "CALC_VAR_12M", "CALC_IPCA_VAR_ANO": "CALC_VAR_ANO",
+        "CALC_NUM_IND_IPCA_2000": "CALC_NUM_IND_2000",
+        "CALC_NUM_IND_IPCA_2005": "CALC_NUM_IND_2005",
+        "CALC_NUM_IND_IPCA_2010": "CALC_NUM_IND_2010",
+    })
+    ipca["FONTE"] = "IPCA (SP)"
+
+    inpc = pd.read_csv(DATA_DIR / "INPC_CONSOLIDADO.csv", sep=";", low_memory=False)
+    inpc = inpc.rename(columns={
+        "INPC_VAR_MENSAL": "VAR_MENSAL", "INPC_PESO_MENSAL": "PESO_MENSAL",
+        "CALC_INPC_VAR_12M": "CALC_VAR_12M", "CALC_INPC_VAR_ANO": "CALC_VAR_ANO",
+        "CALC_NUM_IND_INPC_2000": "CALC_NUM_IND_2000",
+        "CALC_NUM_IND_INPC_2005": "CALC_NUM_IND_2005",
+        "CALC_NUM_IND_INPC_2010": "CALC_NUM_IND_2010",
+    })
+    inpc["FONTE"] = inpc["ABRANGENCIA"].map({"São Paulo (RM)": "INPC (SP)", "Brasil": "INPC (Brasil)"})
+
+    df = pd.concat([ipca[_COLUNAS_COMUNS], inpc[_COLUNAS_COMUNS]], ignore_index=True)
     df["DATA"] = pd.to_datetime(df["MES_COD"], format="%Y%m")
-    for col in [
-        "IPCA_VAR_MENSAL", "CALC_IPCA_VAR_12M", "CALC_IPCA_VAR_ANO", "IPCA_PESO_MENSAL",
-        "CALC_NUM_IND_IPCA_2000", "CALC_NUM_IND_IPCA_2005", "CALC_NUM_IND_IPCA_2010",
-    ]:
+    for col in _COLUNAS_VARIAVEL:
         df[col] = pd.to_numeric(df[col], errors="coerce")
     return df
 
@@ -70,9 +89,17 @@ df = load_data()
 TIPO_ORDER = ["GERAL", "GRUPO", "SUBGRUPO", "ITEM", "SUBITEM"]
 DEFAULT_ON = {"GERAL", "GRUPO"}
 
+# Catálogo único de séries por CODIGO, mesclando IPCA e INPC. Nem todo CODIGO existe nas 2
+# bases (672 em comum, ~50-60 exclusivos de cada uma) — quando o nome diverge entre elas
+# (grafia diferente, ~102 casos), prevalece o NOME_ATIVO do IPCA (curado manualmente) por
+# vir primeiro no concat abaixo; séries só do INPC usam o nome já corrigido automaticamente
+# de lá (ver consolida_bases_inpc.py).
 series_info = (
-    df[["CODIGO", "NOME_ATIVO", "GRUPO", "CATEGORIA_TIPO", "COMPLETUDE_INFO"]]
-    .drop_duplicates(subset="CODIGO")
+    pd.concat([
+        df.loc[df["FONTE"] == "IPCA (SP)", ["CODIGO", "NOME_ATIVO", "GRUPO", "CATEGORIA_TIPO"]],
+        df.loc[df["FONTE"] != "IPCA (SP)", ["CODIGO", "NOME_ATIVO", "GRUPO", "CATEGORIA_TIPO"]],
+    ])
+    .drop_duplicates(subset="CODIGO", keep="first")
     .sort_values(["CATEGORIA_TIPO", "NOME_ATIVO"])
     .reset_index(drop=True)
 )
@@ -206,16 +233,16 @@ with st.sidebar:
 
     st.markdown("**Variável**")
     VAR_OPTIONS = {
-        "Variação mensal (%)":                    "IPCA_VAR_MENSAL",
-        "Variação acum. 12 meses (%)":             "CALC_IPCA_VAR_12M",
-        "Variação acumulada no ano (%)":           "CALC_IPCA_VAR_ANO",
-        "Número índice (base 100 = jan/2000)":     "CALC_NUM_IND_IPCA_2000",
-        "Número índice (base 100 = jan/2005)":     "CALC_NUM_IND_IPCA_2005",
-        "Número índice (base 100 = jan/2010)":     "CALC_NUM_IND_IPCA_2010",
+        "Variação mensal (%)":                    "VAR_MENSAL",
+        "Variação acum. 12 meses (%)":             "CALC_VAR_12M",
+        "Variação acumulada no ano (%)":           "CALC_VAR_ANO",
+        "Número índice (base 100 = jan/2000)":     "CALC_NUM_IND_2000",
+        "Número índice (base 100 = jan/2005)":     "CALC_NUM_IND_2005",
+        "Número índice (base 100 = jan/2010)":     "CALC_NUM_IND_2010",
     }
     var_label = st.selectbox("Variável", list(VAR_OPTIONS.keys()), label_visibility="collapsed")
     var_col   = VAR_OPTIONS[var_label]
-    is_indice = var_col.startswith("CALC_NUM_IND_IPCA")
+    is_indice = var_col.startswith("CALC_NUM_IND")
     unidade   = "" if is_indice else "%"
 
     st.markdown("**Janela temporal**")
@@ -224,6 +251,15 @@ with st.sidebar:
     ano_ini, ano_fim = st.slider(
         "Ano", min_year, max_year, (2000, max_year),
         label_visibility="collapsed",
+    )
+
+    st.divider()
+    st.markdown("**Fontes**")
+    fontes_ativas = st.multiselect(
+        "Fontes", FONTE_ORDER, default=FONTE_ORDER, label_visibility="collapsed",
+        help="IPCA cobre só a RM São Paulo. O INPC traz Brasil e RM São Paulo — útil para "
+             "comparar o custo de vida de famílias de baixa renda (INPC) contra a média "
+             "geral (IPCA) na mesma região.",
     )
 
     st.divider()
@@ -274,6 +310,8 @@ selected = [
 ]
 
 # ── Cabeçalho principal ───────────────────────────────────────────────────────
+fontes_label = " · ".join(fontes_ativas) if fontes_ativas else "Nenhuma fonte selecionada"
+
 st.markdown(
     f"""
     <div style="display:flex; align-items:center; justify-content:space-between;
@@ -281,11 +319,10 @@ st.markdown(
         <div>
             <p style="font-size:1.7rem; font-weight:700; color:{title_color};
                       margin:0; line-height:1.2">
-                Análise Descritiva — IPCA
+                Análise Descritiva — IPCA &amp; INPC
             </p>
             <p style="color:{sub_color}; font-size:0.88rem; margin:3px 0 0 0">
-                Região Metropolitana de São Paulo &nbsp;·&nbsp;
-                IBGE &nbsp;·&nbsp; {ano_ini}–{ano_fim}
+                {fontes_label} &nbsp;·&nbsp; IBGE &nbsp;·&nbsp; {ano_ini}–{ano_fim}
             </p>
         </div>
         <img src="{LOGO_URL}"
@@ -317,15 +354,20 @@ with col_f:
         help="Disponível quando 'Comparar grupos' está ativo.",
     )
 with col_g:
-    dash_por_grupo = st.toggle(
-        "〰️ Linha por grupo", value=True, key="dash_por_grupo",
-        help="Quando ativado, cada grupo do IPCA usa um padrão de traço diferente "
-             "(sólido, tracejado, pontilhado...). Desative para todas as séries "
-             "usarem linha sólida.",
+    dash_por_fonte = st.toggle(
+        "〰️ Linha por fonte", value=True, key="dash_por_fonte",
+        help="Quando ativado, cada fonte (IPCA SP / INPC SP / INPC Brasil) usa um padrão "
+             "de traço diferente (sólido, tracejado, pontilhado), facilitando comparar as "
+             "mesmas séries entre índices/abrangências. Desative para todas usarem linha "
+             "sólida.",
     )
 
 match_y = split_view and match_y_toggle
 palette = PALETTE_CB if cb_friendly else PALETTE
+
+if not fontes_ativas:
+    st.info("Selecione ao menos uma fonte no painel lateral.")
+    st.stop()
 
 if not selected:
     st.info("Selecione ao menos uma série no painel lateral.")
@@ -338,14 +380,15 @@ if not show_series and not show_trend and not show_seasonal:
 # ── Filtragem por janela temporal ─────────────────────────────────────────────
 df_sel = df[
     df["CODIGO"].isin(selected) &
+    df["FONTE"].isin(fontes_ativas) &
     (df["DATA"].dt.year >= ano_ini) &
     (df["DATA"].dt.year <= ano_fim)
 ].copy()
 
-# ── Decomposição STL (cacheada por série + variável) ──────────────────────────
+# ── Decomposição STL (cacheada por série + fonte + variável) ──────────────────
 @st.cache_data(show_spinner=False)
-def get_decomposition(cod: str, col: str):
-    sub   = df[df["CODIGO"] == cod].set_index("DATA")[col].sort_index()
+def get_decomposition(cod: str, fonte: str, col: str):
+    sub   = df[(df["CODIGO"] == cod) & (df["FONTE"] == fonte)].set_index("DATA")[col].sort_index()
     clean = sub.dropna()
     if len(clean) < 24:
         return None, None
@@ -403,17 +446,12 @@ for ann in fig.layout.annotations:
     ann.font.color = font_color
 
 stl_warnings = []
+mostra_fonte_na_legenda = len(fontes_ativas) > 1
 
 for i, cod in enumerate(selected):
     color = palette[i % len(palette)]
     grupo = GRUPO_BY_CODIGO.get(cod, GRUPO_GERAL)
-    dash  = GRUPO_DASH.get(grupo, "solid") if dash_por_grupo else "solid"
-    sub   = df_sel[df_sel["CODIGO"] == cod].sort_values("DATA")
-    if sub.empty:
-        continue
-
-    nome = sub["NOME_ATIVO"].iloc[0]
-    y    = sub.set_index("DATA")[var_col].sort_index()
+    nome  = series_info.loc[series_info["CODIGO"] == cod, "NOME_ATIVO"].iloc[0]
 
     # Em qual(is) coluna(s) esta série aparece. Sem divisão por grupo: sempre a coluna 1.
     # Com divisão: cada grupo tem sua própria coluna, e o Índice geral (não pertence a
@@ -425,77 +463,89 @@ for i, cod in enumerate(selected):
     else:
         cols_target = [col_by_grupo.get(grupo, 1)]
 
-    # Qual componente aparece primeiro na legenda para este grupo
+    # Qual componente aparece primeiro na legenda para esta série+fonte
     legend_anchor = (
         "series"   if show_series   else
         "trend"    if show_trend    else
         "seasonal"
     )
 
-    # ── Série original ────────────────────────────────────────────────────────
-    if show_series:
-        for c in cols_target:
-            fig.add_trace(
-                go.Scatter(
-                    x=y.index,
-                    y=y.values,
-                    name=nome,
-                    line=dict(color=color, width=1.8, dash=dash),
-                    legendgroup=cod,
-                    showlegend=(legend_anchor == "series" and c == cols_target[0]),
-                    hovertemplate=(
-                        f"<b>{nome}</b><br>%{{x|%b %Y}}: %{{y:.2f}}{unidade}<extra></extra>"
+    for fonte in fontes_ativas:
+        # Nem todo CODIGO existe nas 3 fontes (ver série unificada acima) — pula em
+        # silêncio quando a combinação série+fonte não tem dado.
+        sub = df_sel[(df_sel["CODIGO"] == cod) & (df_sel["FONTE"] == fonte)].sort_values("DATA")
+        if sub.empty:
+            continue
+
+        dash  = FONTE_DASH.get(fonte, "solid") if dash_por_fonte else "solid"
+        label = f"{nome} — {fonte}" if mostra_fonte_na_legenda else nome
+        legend_key = f"{cod}|{fonte}"
+        y = sub.set_index("DATA")[var_col].sort_index()
+
+        # ── Série original ────────────────────────────────────────────────────
+        if show_series:
+            for c in cols_target:
+                fig.add_trace(
+                    go.Scatter(
+                        x=y.index,
+                        y=y.values,
+                        name=label,
+                        line=dict(color=color, width=1.8, dash=dash),
+                        legendgroup=legend_key,
+                        showlegend=(legend_anchor == "series" and c == cols_target[0]),
+                        hovertemplate=(
+                            f"<b>{label}</b><br>%{{x|%b %Y}}: %{{y:.2f}}{unidade}<extra></extra>"
+                        ),
                     ),
-                ),
-                row=1, col=c,
-            )
+                    row=1, col=c,
+                )
 
-    # ── Decomposição ──────────────────────────────────────────────────────────
-    if show_trend or show_seasonal:
-        trend, seasonal = get_decomposition(cod, var_col)
+        # ── Decomposição ──────────────────────────────────────────────────────
+        if show_trend or show_seasonal:
+            trend, seasonal = get_decomposition(cod, fonte, var_col)
 
-        if trend is None:
-            stl_warnings.append(nome)
-        else:
-            mask = (trend.index.year >= ano_ini) & (trend.index.year <= ano_fim)
+            if trend is None:
+                stl_warnings.append(label)
+            else:
+                mask = (trend.index.year >= ano_ini) & (trend.index.year <= ano_fim)
 
-            if show_trend:
-                t = trend[mask]
-                for c in cols_target:
-                    fig.add_trace(
-                        go.Scatter(
-                            x=t.index,
-                            y=t.values,
-                            name=nome,
-                            line=dict(color=color, width=2.8, dash=dash),
-                            legendgroup=cod,
-                            showlegend=(legend_anchor == "trend" and c == cols_target[0]),
-                            hovertemplate=(
-                                f"<b>Tendência — {nome}</b><br>"
-                                f"%{{x|%b %Y}}: %{{y:.2f}}{unidade}<extra></extra>"
+                if show_trend:
+                    t = trend[mask]
+                    for c in cols_target:
+                        fig.add_trace(
+                            go.Scatter(
+                                x=t.index,
+                                y=t.values,
+                                name=label,
+                                line=dict(color=color, width=2.8, dash=dash),
+                                legendgroup=legend_key,
+                                showlegend=(legend_anchor == "trend" and c == cols_target[0]),
+                                hovertemplate=(
+                                    f"<b>Tendência — {label}</b><br>"
+                                    f"%{{x|%b %Y}}: %{{y:.2f}}{unidade}<extra></extra>"
+                                ),
                             ),
-                        ),
-                        row=1, col=c,
-                    )
+                            row=1, col=c,
+                        )
 
-            if show_seasonal:
-                s = seasonal[mask]
-                for c in cols_target:
-                    fig.add_trace(
-                        go.Scatter(
-                            x=s.index,
-                            y=s.values,
-                            name=nome,
-                            line=dict(color=color, width=1.5, dash=dash),
-                            legendgroup=cod,
-                            showlegend=(legend_anchor == "seasonal" and c == cols_target[0]),
-                            hovertemplate=(
-                                f"<b>Sazonalidade — {nome}</b><br>"
-                                f"%{{x|%b %Y}}: %{{y:.2f}}{unidade}<extra></extra>"
+                if show_seasonal:
+                    s = seasonal[mask]
+                    for c in cols_target:
+                        fig.add_trace(
+                            go.Scatter(
+                                x=s.index,
+                                y=s.values,
+                                name=label,
+                                line=dict(color=color, width=1.5, dash=dash),
+                                legendgroup=legend_key,
+                                showlegend=(legend_anchor == "seasonal" and c == cols_target[0]),
+                                hovertemplate=(
+                                    f"<b>Sazonalidade — {label}</b><br>"
+                                    f"%{{x|%b %Y}}: %{{y:.2f}}{unidade}<extra></extra>"
+                                ),
                             ),
-                        ),
-                        row=2, col=c,
-                    )
+                            row=2, col=c,
+                        )
 
 # ── Eixos ─────────────────────────────────────────────────────────────────────
 fig.update_xaxes(
@@ -543,10 +593,10 @@ fig.update_layout(
 
 st.plotly_chart(fig, use_container_width=True)
 
-if dash_por_grupo:
+if dash_por_fonte:
     st.caption(
-        "O tipo de linha (sólida, tracejada, pontilhada...) varia por grupo — veja o "
-        "grupo de cada série na tabela de séries selecionadas abaixo."
+        "O tipo de linha (sólida, tracejada, pontilhada) varia por fonte "
+        f"({', '.join(fontes_ativas)}) — mesma série, cor igual, comparável entre fontes."
     )
 
 if stl_warnings:
@@ -558,10 +608,20 @@ if stl_warnings:
 
 # ── Tabela informativa ────────────────────────────────────────────────────────
 with st.expander("ℹ️ Informações das séries selecionadas"):
-    tabela_info = series_info[series_info["CODIGO"].isin(selected)].copy()
+    # Completude é por (CODIGO, FONTE) — uma série pode faltar numa fonte e estar
+    # completa em outra, então a tabela abre uma linha por combinação existente.
+    tabela_info = (
+        df.loc[
+            df["CODIGO"].isin(selected) & df["FONTE"].isin(fontes_ativas),
+            ["CODIGO", "FONTE", "GRUPO", "CATEGORIA_TIPO", "COMPLETUDE_INFO"],
+        ]
+        .drop_duplicates(subset=["CODIGO", "FONTE"])
+        .merge(series_info[["CODIGO", "NOME_ATIVO"]], on="CODIGO", how="left")
+        .sort_values(["CATEGORIA_TIPO", "NOME_ATIVO", "FONTE"])
+    )
     st.dataframe(
         tabela_info[
-            ["CODIGO", "NOME_ATIVO", "GRUPO", "CATEGORIA_TIPO", "COMPLETUDE_INFO"]
+            ["CODIGO", "NOME_ATIVO", "FONTE", "GRUPO", "CATEGORIA_TIPO", "COMPLETUDE_INFO"]
         ].reset_index(drop=True),
         use_container_width=True,
         hide_index=True,

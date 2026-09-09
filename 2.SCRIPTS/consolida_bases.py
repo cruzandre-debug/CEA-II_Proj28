@@ -4,35 +4,28 @@ import numpy as np
 
 import datetime as dt
 
-from pathlib import Path 
+from consolida_comum import (
+    PATH_DADOS_REFINADOS,
+    deriva_codigo,
+    deriva_grupo,
+    classifica_categoria_tipo,
+    calcula_completude,
+    calcula_variacao_acumulada,
+    calcula_numero_indice,
+    gera_relatorio_lacunas,
+)
 # ----------------------------------- #
 
 # =========== PATHs =========== #
-PATH_ATUAL = Path(__file__).parent
-PATH_DADOS_BRUTOS    = PATH_ATUAL.parent / '1.DADOS' / '1.1.DADOS_BRUTOS'
-PATH_DADOS_REFINADOS = PATH_ATUAL.parent / '1.DADOS' / '1.2.DADOS_REFINADOS'
+# Dados brutos do IPCA (export da API SIDRA) ficam em subpasta própria, separados dos do
+# INPC (1.1.2.INPC_BRUTO/), que têm formato de origem diferente.
+PATH_DADOS_BRUTOS_IPCA = PATH_DADOS_REFINADOS.parent / '1.1.DADOS_BRUTOS' / '1.1.1.IPCA_BRUTO'
 # ----------------------------- #
-
-# =========== CATEGORIA_TIPO =========== #
-# Determina se uma série é o indice geral. Se não for, pegamos o código usaado como prefixo
-def deriva_codigo(categoria_serie):
-    codigo = categoria_serie.str.split('.', n=1).str[0].str.strip()
-    tem_ponto = categoria_serie.str.contains('.', regex=False)
-    return codigo.where(tem_ponto, '0')
-
-def classifica_categoria_tipo(codigo_serie):
-    tamanho = codigo_serie.str.len()
-    return np.select(
-        [codigo_serie == '0', tamanho == 1, tamanho == 2, tamanho == 4],
-        ['GERAL', 'GRUPO', 'SUBGRUPO', 'ITEM'],
-        default='SUBITEM'
-    )
-# ---------------------------------------- #
 
 # =========== LEITURA =========== #
 lista_dfs = []
 
-for arquivo in PATH_DADOS_BRUTOS.glob('*.csv'):
+for arquivo in PATH_DADOS_BRUTOS_IPCA.glob('*.csv'):
     df = pd.read_csv(
             arquivo, 
             sep=',',
@@ -89,22 +82,7 @@ df_limpo.loc[sem_codigo, 'NOME_ATIVO_BRUTO'] = df_limpo.loc[sem_codigo, 'CODIGO'
 df_limpo.loc[sem_codigo, 'CODIGO'] = '0'
 
 df_limpo['CATEGORIA_TIPO'] = classifica_categoria_tipo(df_limpo['CODIGO'])
-
-# Grupo do IPCA (1º dígito do CODIGO) por extenso, na nomenclatura oficial do IBGE.
-GRUPO_NOMES = {
-    '1': 'Alimentação e bebidas',
-    '2': 'Habitação',
-    '3': 'Artigos de residência',
-    '4': 'Vestuário',
-    '5': 'Transportes',
-    '6': 'Saúde e cuidados pessoais',
-    '7': 'Despesas pessoais',
-    '8': 'Educação',
-    '9': 'Comunicação',
-}
-df_limpo['GRUPO'] = np.where(
-    df_limpo['CODIGO'] == '0', 'Índice geral', df_limpo['CODIGO'].str[0].map(GRUPO_NOMES)
-)
+df_limpo['GRUPO'] = deriva_grupo(df_limpo['CODIGO'])
 # ------------------------------ #
 
 
@@ -379,18 +357,7 @@ df_limpo['ANO_COD'] = df_limpo['MES_COD'] // 100
 colunas_ipca = ['IPCA_VAR_MENSAL', 'IPCA_PESO_MENSAL', 'IPCA_VAR_12M', 'IPCA_VAR_YTD']
 df_limpo[colunas_ipca] = df_limpo[colunas_ipca].replace(['-', '...'], np.nan).apply(pd.to_numeric)
 
-# COMPLETUDE_INFO: por CODIGO, se IPCA_VAR_MENSAL está ausente em TODOS os meses (TOTAL),
-# em ALGUNS meses (PARCIAL) ou em NENHUM (COMPLETA).
-resumo_completude = df_limpo.groupby('CODIGO')['IPCA_VAR_MENSAL'].agg(
-    n_total='size',
-    n_ausente=lambda s: s.isna().sum()
-)
-resumo_completude['COMPLETUDE_INFO'] = np.select(
-    [resumo_completude['n_ausente'] == 0, resumo_completude['n_ausente'] == resumo_completude['n_total']],
-    ['COMPLETA', 'NENHUMA'],
-    default='PARCIAL'
-)
-df_limpo = df_limpo.merge(resumo_completude['COMPLETUDE_INFO'], on='CODIGO', how='left')
+df_limpo = calcula_completude(df_limpo, ['CODIGO'], 'IPCA_VAR_MENSAL')
 # -------------------------------------------------------- #
 
 
@@ -418,37 +385,11 @@ df_limpo = df_limpo[~df_limpo['CODIGO'].isin(CODIGOS_REDUNDANTES_COM_PAI)]
 
 
 # ========== CÁLCULOS DE VARIACAO ACUMULADA E NUMERO ÍNDICE ============ #
-def var_acumulada(janela_temporal):
-    return (np.prod((1 + janela_temporal/100)) - 1)*100
-
-def num_ind_ipca(df, ponto_tempo = 200501, base_value = 100):
-    # Número índice acumulado por CODIGO a partir de ponto_tempo (mês-base = base_value).
-    # Meses sem IPCA_VAR_MENSAL são tratados como variação 0% para o índice não travar em NaN.
-    col_name = f"CALC_NUM_IND_IPCA_{str(ponto_tempo)[:4]}"
-    df = df.copy()
-    df[col_name] = np.nan
-
-    sub = (
-        df[df['MES_COD'] >= ponto_tempo]
-        .sort_values(by = ["CODIGO", "MES_COD"])
-        .copy()
-    )
-    variacao = sub["IPCA_VAR_MENSAL"].fillna(0)
-    # o mês-base não compõe seu próprio índice — por isso o fator dele é 1
-    fator = np.where(sub["MES_COD"] == ponto_tempo, 1.0, 1 + variacao / 100)
-    sub["fator"] = fator
-    sub[col_name] = sub.groupby("CODIGO")["fator"].transform(lambda f: base_value * np.cumprod(f))
-
-    df.loc[sub.index, col_name] = sub[col_name]
-    return df
-
-
-df_limpo["CALC_IPCA_VAR_12M"] = df_limpo.groupby(by = "CODIGO", as_index = False)["IPCA_VAR_MENSAL"].rolling(window = 12, min_periods = 1).apply(var_acumulada, raw = True)["IPCA_VAR_MENSAL"]
-df_limpo["CALC_IPCA_VAR_ANO"] = df_limpo.groupby(by = ["CODIGO", "ANO_COD"], as_index = False)["IPCA_VAR_MENSAL"].rolling(window = 12, min_periods = 1).apply(var_acumulada, raw = True)["IPCA_VAR_MENSAL"]
+df_limpo = calcula_variacao_acumulada(df_limpo, ['CODIGO'], 'IPCA_VAR_MENSAL', 'ANO_COD', 'IPCA')
 
 PONTOS_NUM_INDICE = [200001, 200501, 201001]
 for ponto in PONTOS_NUM_INDICE:
-    df_limpo = num_ind_ipca(df_limpo, ponto_tempo = ponto)
+    df_limpo = calcula_numero_indice(df_limpo, ['CODIGO'], 'IPCA_VAR_MENSAL', 'MES_COD', 'IPCA', ponto)
 #--------------------------------------------------------#
 
 colunas_finais = ['CATEGORIA_COD', 'CATEGORIA', 'CODIGO',
@@ -461,44 +402,7 @@ df_limpo.to_csv(PATH_DADOS_REFINADOS / 'IPCA_CONSOLIDADO.csv', sep=';', index=Fa
 
 
 # =========== LEVANTAMENTO DE LACUNAS EM IPCA_VAR_MENSAL =========== #
-# Das que são parciais ou 
-def formata_intervalos_ausentes(datas):
-    datas = sorted(datas)
-    intervalos = []
-    inicio = fim = datas[0]
-    for data in datas[1:]:
-        if (data.year - fim.year) * 12 + (data.month - fim.month) == 1:
-            fim = data
-        else:
-            intervalos.append((inicio, fim))
-            inicio = fim = data
-    intervalos.append((inicio, fim))
-
-    partes = []
-    for ini, fim in intervalos:
-        if ini == fim:
-            partes.append(ini.strftime('%Y-%m'))
-        else:
-            partes.append(f"{ini.strftime('%Y-%m')} a {fim.strftime('%Y-%m')}")
-    return '; '.join(partes)
-
-df_lacunas = df_limpo.copy()
-df_lacunas['DATA'] = pd.to_datetime(df_lacunas['MES_COD'], format='%Y%m')
-
-linhas_lacunas = []
-for codigo, grupo in df_lacunas.groupby('CODIGO'):
-    datas_ausentes = grupo.loc[grupo['IPCA_VAR_MENSAL'].isna(), 'DATA'].tolist()
-    if not datas_ausentes:
-        continue
-    linhas_lacunas.append({
-        'CODIGO': codigo,
-        'NOME_ATIVO': grupo['NOME_ATIVO'].iloc[0],
-        'N_MESES_TOTAL': len(grupo),
-        'N_MESES_AUSENTES': len(datas_ausentes),
-        'INTERVALOS_AUSENTES': formata_intervalos_ausentes(datas_ausentes),
-    })
-
-df_series_com_lacunas = pd.DataFrame(linhas_lacunas).sort_values('N_MESES_AUSENTES', ascending=False)
+df_series_com_lacunas = gera_relatorio_lacunas(df_limpo, ['CODIGO'], 'IPCA_VAR_MENSAL', 'MES_COD')
 df_series_com_lacunas.to_csv(PATH_DADOS_REFINADOS / 'IPCA_AUSENTES_VAR_MENSAL.csv', sep=';', index=False, encoding='utf-8')
 
 n_total_ausentes = (df_series_com_lacunas['N_MESES_TOTAL'] == df_series_com_lacunas['N_MESES_AUSENTES']).sum()
